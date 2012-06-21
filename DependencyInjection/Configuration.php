@@ -24,7 +24,7 @@ class Configuration implements ConfigurationInterface
             ->children()
                 ->arrayNode('connections')
                     ->addDefaultsIfNotSet()
-                    ->useAttributeAsKey('name')
+                    ->useAttributeAsKey('key')
                     ->prototype('array')
                         ->children()
                             ->scalarNode('host')->defaultValue('localhost')->end()
@@ -34,6 +34,33 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
+                ->arrayNode('publishers')
+                    ->addDefaultsIfNotSet()
+                    ->useAttributeAsKey('key')
+                    ->prototype('array')
+                        ->children()
+                            ->scalarNode('connection')->defaultValue('default')->end()
+                            ->arrayNode('options')
+                                ->children()
+                                    ->scalarNode('type')->defaultNull('queue')->end()
+                                    ->scalarNode('name')->isRequired()->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end()
+            //Connection validation
+            ->validate()
+                ->ifTrue( function($v) {
+                    foreach($v['publishers'] as $key => $producer)
+                    {
+                        if(!isset($v['connections'][$producer['connection']])) return true;
+                    }
+
+                    return false;
+                })
+                ->thenInvalid('Unknow connection in publishers configuration.')
             ->end()
         ;
 

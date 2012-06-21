@@ -3,6 +3,7 @@ namespace Overblog\ActiveMqBundle\ActiveMq;
 
 use Overblog\ActiveMqBundle\Exception\ActiveMqException;
 use Overblog\ActiveMqBundle\ActiveMq\Message;
+use Overblog\ActiveMqBundle\ActiveMq\Connection;
 
 /**
  * Description of Publisher
@@ -11,20 +12,20 @@ use Overblog\ActiveMqBundle\ActiveMq\Message;
  */
 class Publisher
 {
-    public function __construct()
-    {
+    protected $connection;
+    protected $options;
 
+    public function __construct(Connection $connection, array $options)
+    {
+        $this->connection = $connection;
+        $this->options = $options;
     }
 
-    public function publish($queue, Message $msg)
+    public function publish(Message $msg)
     {
-        $stomp = new \Stomp('tcp://localhost:61613');
+        $stomp = $this->connection->getConnection();
 
-        //$msg->setPersistent(1);
-
-        var_dump($msg->getMessageHeaders());
-
-        if(!$stomp->send($queue, $msg->getText(), $msg->getMessageHeaders()))
+        if(!$stomp->send('/queue/hub.xavier', $msg->getText(), $msg->getMessageHeaders()))
         {
             throw new ActiveMqException('Unable to send message');
         }

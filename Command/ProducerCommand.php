@@ -21,7 +21,7 @@ class ProducerCommand extends ContainerAwareCommand
         $this->setName('activemq:producer')
              ->setDescription('Send a message to a given queue.');
 
-        $this->addArgument('name', InputArgument::REQUIRED, 'Queue name');
+        $this->addArgument('name', InputArgument::REQUIRED, 'Producer name');
         $this->addOption('message', 'm', InputOption::VALUE_REQUIRED, 'Message to send');
         $this->addOption('serializer', 'z', InputOption::VALUE_REQUIRED, 'Serialize message (serialize, json)');
     }
@@ -48,6 +48,8 @@ class ProducerCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
 	{
+        $time_start = microtime(true);
+
         $message = $input->getOption('message');
 
         if(empty($message))
@@ -56,7 +58,13 @@ class ProducerCommand extends ContainerAwareCommand
             return;
         }
 
-        $publisher = $this->getContainer()->get('overblog_active_mq.publisher');
+        $publisher = $this->getContainer()
+                          ->get(
+                                sprintf(
+                                    'overblog_active_mq.publisher.%s',
+                                    $input->getArgument('name')
+                                )
+                            );
 
         // Serializer
         switch($input->getOption('serializer'))
@@ -73,15 +81,22 @@ class ProducerCommand extends ContainerAwareCommand
         // Send message
         try
         {
-            $publisher->publish(
-                    $input->getArgument('name'),
-                    new Message($message)
+            $publisher->publish(new Message($message));
+            $output->writeln(
+                    sprintf(
+                        '<info>Message has been sent in %s ms</info>',
+                        round(microtime(true) - $time_start, 3)
+                    )
                 );
-            $output->writeln('<info>Message has been sent</info>');
         }
         catch(\Exception $e)
         {
-            $output->writeln('<error>Error while sending message</error>');
+            $output->writeln(
+                    sprintf(
+                        '<error>Error while sending message: %s</error>',
+                        $e->getMessage()
+                    )
+                );
         }
     }
 

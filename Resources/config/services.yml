@@ -1,6 +1,3 @@
 parameters:
     overblog_active_mq.publisher.class: Overblog\ActiveMqBundle\ActiveMq\Publisher
-
-services:
-    overblog_active_mq.publisher:
-        class: %overblog_active_mq.publisher.class%
+    overblog_active_mq.connection.class: Overblog\ActiveMqBundle\ActiveMq\Connection

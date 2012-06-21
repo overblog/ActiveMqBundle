@@ -169,9 +169,10 @@ class Message
             $header['expires'] = (double)round(microtime(true) * 1000) + $this->expires;
         }
 
-        if(!$this->persistent)
+        // Stomp message is not persistent by default
+        if($this->persistent)
         {
-            $header['persistent'] = 0;
+            $header['persistent'] = 'true';
         }
 
         if($this->priority != 4)
