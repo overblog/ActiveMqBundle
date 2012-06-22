@@ -23,7 +23,7 @@ class ConsumerCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
 	{
         $stomp = new \Stomp('tcp://localhost:61613', 'overblog', 'overblog1636');
-        $stomp->subscribe('/queue/hub.>');
+        $stomp->subscribe('/topic/Solr.TEST');
 
         while(true)
         {

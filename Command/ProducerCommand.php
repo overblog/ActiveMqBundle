@@ -35,10 +35,16 @@ class ProducerCommand extends ContainerAwareCommand
     {
         $dialog = $this->getDialogHelper();
 
-        $input->setOption(
-                'message',
-                $dialog->ask($output, "<comment>Enter the message to send: </comment>"
-            ));
+        if(!$input->getOption('message'))
+        {
+            $input->setOption(
+                    'message',
+                    $dialog->ask(
+                            $output,
+                            '<comment>Enter the message to send: </comment>',
+                            $input->getOption('message')
+                ));
+        }
     }
 
     /**
@@ -81,7 +87,12 @@ class ProducerCommand extends ContainerAwareCommand
         // Send message
         try
         {
-            $publisher->publish(new Message($message));
+            $msg = new Message($message);
+
+            $msg->headers->set('status', 0);
+            $msg->headers->set('priority', 17);
+
+            $publisher->publish($msg);
             $output->writeln(
                     sprintf(
                         '<info>Message has been sent in %s ms</info>',

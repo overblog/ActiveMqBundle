@@ -1,6 +1,8 @@
 <?php
 namespace Overblog\ActiveMqBundle\ActiveMq;
 
+use Symfony\Component\HttpFoundation\ParameterBag;
+
 /**
  * Description of Message
  *
@@ -48,12 +50,19 @@ class Message
     protected $groupSeq = 0;
 
     /**
+     * Additional headers
+     * @var ParameterBag
+     */
+    public $headers;
+
+    /**
      * Create a new message for sending to Active MQ
      * @param string $text
      */
     public function __construct($text)
     {
         $this->text = $text;
+        $this->headers = new ParameterBag();
     }
 
     /**
@@ -166,7 +175,8 @@ class Message
         // Send only header if default value is changed
         if($this->expires != 0)
         {
-            $header['expires'] = (double)round(microtime(true) * 1000) + $this->expires;
+            $header['expires'] =
+                (double)round(microtime(true) * 1000) + $this->expires;
         }
 
         // Stomp message is not persistent by default
@@ -188,6 +198,15 @@ class Message
         if($this->groupSeq != 0)
         {
             $header['JMSXGroupSeq'] = $this->groupSeq;
+        }
+
+        // Add additional headers
+        foreach($this->headers->all() as $key => $var)
+        {
+            if(!isset($this->$key))
+            {
+                $header[$key] = $var;
+            }
         }
 
         return $header;
