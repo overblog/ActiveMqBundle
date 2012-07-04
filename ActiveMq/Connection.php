@@ -67,4 +67,22 @@ class Connection
                 $this->options['port']
             );
     }
+
+    /**
+     * Purge queue or topic
+     * @param string $queue
+     */
+    public function purge($queue)
+    {
+        $stomp = $this->getConnection();
+
+        $stomp->subscribe($queue);
+
+        while($stomp->hasFrame())
+        {
+            $stomp->ack($stomp->readFrame());
+        }
+
+        $stomp->unsubscribe($queue);
+    }
 }

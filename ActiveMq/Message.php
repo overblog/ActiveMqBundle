@@ -11,10 +11,10 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 class Message
 {
     /**
-     * Message content
+     * Message body
      * @var string
      */
-    protected $text;
+    public $body;
 
     /**
      * Expiration time of the message
@@ -57,30 +57,64 @@ class Message
 
     /**
      * Create a new message for sending to Active MQ
-     * @param string $text
+     * @param string $body
+     * @param array $headers
      */
-    public function __construct($text)
+    public function __construct($body, $headers = array())
     {
-        $this->text = $text;
-        $this->headers = new ParameterBag();
+        $this->body = $body;
+        $this->setHeaders($headers);
     }
 
     /**
-     * Return text message
+     * Set object with correct headers
+     * @param array $headers
+     */
+    protected function setHeaders(array $headers)
+    {
+        foreach($headers as $key => $value)
+        {
+            if(isset($this->$key))
+            {
+                $this->$key = $value;
+            }
+
+            // Clés JMSX
+            if(isset($this->{'JMSX' . $key}))
+            {
+                $this->{'JMSX' . $key} = $value;
+            }
+        }
+
+        $this->headers = new ParameterBag($headers);
+    }
+
+    /**
+     * Return header value
+     * @param string $key
      * @return string
      */
-    public function getText()
+    public function get($key)
     {
-        return $this->text;
+        return $this->headers->get($key);
     }
 
     /**
-     * Set text message
-     * @param string $text
+     * Return body
+     * @return string
      */
-    public function setText($text)
+    public function getBody()
     {
-        $this->text = $text;
+        return $this->body;
+    }
+
+    /**
+     * Set body
+     * @param string $body
+     */
+    public function setBody($body)
+    {
+        $this->body = $body;
     }
 
     /**

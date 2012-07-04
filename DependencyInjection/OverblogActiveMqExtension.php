@@ -20,6 +20,8 @@ class OverblogActiveMqExtension extends Extension
     const CONNECTION_CLASS = 'overblog_active_mq.connection.class';
     const PUBLISHER_NAME = 'overblog_active_mq.publisher.%s';
     const PUBLISHER_CLASS = 'overblog_active_mq.publisher.class';
+    const CONSUMER_NAME = 'overblog_active_mq.consumer.%s';
+    const CONSUMER_CLASS = 'overblog_active_mq.consumer.class';
 
     /**
      * {@inheritDoc}
@@ -42,6 +44,12 @@ class OverblogActiveMqExtension extends Extension
         foreach($config['publishers'] as $name => $producer)
         {
             $this->loadPublisher($name, $producer, $container);
+        }
+
+        //Register consumer
+        foreach($config['consumers'] as $name => $consumer)
+        {
+            $this->loadConsumer($name, $consumer, $container);
         }
     }
 
@@ -84,6 +92,30 @@ class OverblogActiveMqExtension extends Extension
 
         $container->setDefinition(
             sprintf(self::PUBLISHER_NAME, $name),
+            $clientDef
+        );
+    }
+
+    /**
+     * Load consumer
+     * @param string $name
+     * @param array $producer
+     * @param ContainerBuilder $container
+     */
+    public function loadConsumer($name, Array $consumer, ContainerBuilder $container)
+    {
+        $clientDef = new Definition(
+            $container->getParameter(self::CONSUMER_CLASS)
+        );
+
+        $clientDef  ->addArgument(new Reference(
+                        sprintf(self::CONNECTION_NAME, $consumer['connection'])
+                    ))
+                    ->addArgument(new Reference($consumer['handler']))
+                    ->addArgument($consumer['options']);
+
+        $container->setDefinition(
+            sprintf(self::CONSUMER_NAME, $name),
             $clientDef
         );
     }

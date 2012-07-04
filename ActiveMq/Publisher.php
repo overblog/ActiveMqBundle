@@ -1,6 +1,7 @@
 <?php
 namespace Overblog\ActiveMqBundle\ActiveMq;
 
+use Overblog\ActiveMqBundle\ActiveMq\Base;
 use Overblog\ActiveMqBundle\Exception\ActiveMqException;
 use Overblog\ActiveMqBundle\ActiveMq\Message;
 use Overblog\ActiveMqBundle\ActiveMq\Connection;
@@ -10,43 +11,25 @@ use Overblog\ActiveMqBundle\ActiveMq\Connection;
  *
  * @author Xavier HAUSHERR
  */
-class Publisher
+class Publisher extends Base
 {
     /**
-     * Connection handler
-     * @var Connection $connection
-     */
-    protected $connection;
-
-    /**
-     * Options
-     * @var array $options
-     */
-    protected $options;
-
-    /**
-     * Instanciate thee publisher
-     * @param Connection $connection
-     * @param array $options
-     */
-    public function __construct(Connection $connection, array $options)
-    {
-        $this->connection = $connection;
-        $this->options = $options;
-    }
-
-    /**
      * Publish Message in ActiveMQ
-     * @param Message $msg
+     * @param mixed $msg
      * @return boolean
      * @throws ActiveMqException
      */
-    public function publish(Message $msg)
+    public function publish($msg)
     {
+        if(!is_object($msg))
+        {
+            $msg = new Message($msg);
+        }
+
         $stomp = $this->connection->getConnection();
 
         if(!$stomp->send($this->getDestination(),
-                $msg->getText(),
+                $msg->getBody(),
                 $msg->getMessageHeaders()
             ))
         {
@@ -54,25 +37,5 @@ class Publisher
         }
 
         return true;
-    }
-
-    /**
-     * Return destination string
-     * @return string
-     * @throws ActiveMqException
-     */
-    public function getDestination()
-    {
-        if(in_array($this->options['type'], array('queue', 'type')))
-        {
-            return sprintf('/%s/%s',
-                    $this->options['type'],
-                    $this->options['name']
-                );
-        }
-        else
-        {
-            throw new ActiveMqException('Wrong destination type');
-        }
     }
 }

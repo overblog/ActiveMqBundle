@@ -89,9 +89,6 @@ class ProducerCommand extends ContainerAwareCommand
         {
             $msg = new Message($message);
 
-            $msg->headers->set('status', 0);
-            $msg->headers->set('priority', 17);
-
             $publisher->publish($msg);
             $output->writeln(
                     sprintf(

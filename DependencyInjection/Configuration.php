@@ -49,6 +49,22 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
+                ->arrayNode('consumers')
+                    ->addDefaultsIfNotSet()
+                    ->useAttributeAsKey('key')
+                    ->prototype('array')
+                        ->children()
+                            ->scalarNode('connection')->defaultValue('default')->end()
+                            ->scalarNode('handler')->isRequired()->end()
+                            ->arrayNode('options')
+                                ->children()
+                                    ->scalarNode('type')->defaultNull('queue')->end()
+                                    ->scalarNode('name')->isRequired()->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
             ->end()
             //Connection validation
             ->validate()
@@ -61,6 +77,18 @@ class Configuration implements ConfigurationInterface
                     return false;
                 })
                 ->thenInvalid('Unknow connection in publishers configuration.')
+            ->end()
+            //Connection validation
+            ->validate()
+                ->ifTrue( function($v) {
+                    foreach($v['consumers'] as $key => $producer)
+                    {
+                        if(!isset($v['connections'][$producer['connection']])) return true;
+                    }
+
+                    return false;
+                })
+                ->thenInvalid('Unknow connection in consumers configuration.')
             ->end()
         ;
 

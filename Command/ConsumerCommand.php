@@ -17,24 +17,21 @@ class ConsumerCommand extends ContainerAwareCommand
     protected function configure()
 	{
         $this->setName('activemq:consumer')
-             ->setDescription('Consumer a message from a given queue.');
+             ->setDescription('Consume a message from a given queue.');
+
+        $this->addArgument('name', InputArgument::REQUIRED, 'Consumer name');
+        $this->addOption('messages', 'm', InputOption::VALUE_REQUIRED, 'Messages to consume', 0);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
 	{
-        $stomp = new \Stomp('tcp://localhost:61613', 'overblog', 'overblog1636');
-        $stomp->subscribe('/topic/Solr.TEST');
-
-        while(true)
-        {
-            if($stomp->hasFrame())
-            {
-                $frame = $stomp->readFrame();
-
-                var_dump($frame);
-
-                $stomp->ack($frame);
-            }
-        }
+        $consumer = $this->getContainer()
+                         ->get(
+                               sprintf(
+                                   'overblog_active_mq.consumer.%s',
+                                   $input->getArgument('name')
+                               )
+                           );
+        $consumer->consume($input->getOption('messages'));
     }
 }
