@@ -30,7 +30,7 @@ class Message
     protected $persistent = true;
 
     /**
-     * Priority on the message
+     * Priority on the message (0 < 9)
      * value from 0-9
      * @var int
      */
