@@ -52,10 +52,7 @@ abstract class Base
 
             if(!empty($routing_key))
             {
-                if(preg_match('#>|\*$#', $destination))
-                {
-                    throw new ActiveMqException('Unable to set routing key with wildcard');
-                }
+                $destination = preg_replace('#\\' . self::SEPARATOR . '>|\*$#', '', $destination);
 
                 $destination .= self::SEPARATOR . $routing_key;
             }
@@ -70,10 +67,11 @@ abstract class Base
 
     /**
      * Purge given destination
+     * @param string $routing_key
      * @return type
      */
-    public function purge()
+    public function purge($routing_key = null)
     {
-        return $this->connection->purge($this->getDestination());
+        return $this->connection->purge($this->getDestination($routing_key));
     }
 }
