@@ -55,7 +55,7 @@ class Consumer extends Base
     {
         $stomp = $this->connection->getConnection();
 
-        $stomp->subscribe($this->getDestination($this->routing_key));
+        $stomp->subscribe($this->getDestination($this->routing_key), $this->getHeaders());
 
         // Infinite loop
         if($msgAmount <= 0) $msgAmount = -1;
@@ -78,6 +78,22 @@ class Consumer extends Base
         }
 
         $stomp->unsubscribe($this->getDestination());
+    }
+
+    /**
+     * Set headers
+     * @return array
+     */
+    protected function getHeaders()
+    {
+        $headers = array();
+
+        if($this->options->has('prefetchSize'))
+        {
+            $headers['activemq.prefetchSize'] = $this->options->get('prefetchSize');
+        }
+
+        return $headers;
     }
 }
 

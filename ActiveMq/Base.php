@@ -2,6 +2,7 @@
 namespace Overblog\ActiveMqBundle\ActiveMq;
 
 use Overblog\ActiveMqBundle\Exception\ActiveMqException;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * Description of Base
@@ -32,7 +33,7 @@ abstract class Base
     public function __construct(Connection $connection, array $options)
     {
         $this->connection = $connection;
-        $this->options = $options;
+        $this->options = new ParameterBag($options);
     }
 
     /**
@@ -43,11 +44,11 @@ abstract class Base
      */
     public function getDestination($routing_key = null)
     {
-        if(in_array($this->options['type'], array('queue', 'type')))
+        if(in_array($this->options->get('type'), array('queue', 'type')))
         {
             $destination = sprintf('/%s/%s',
-                    $this->options['type'],
-                    $this->options['name']
+                    $this->options->get('type'),
+                    $this->options->get('name')
                 );
 
             if(!empty($routing_key))
