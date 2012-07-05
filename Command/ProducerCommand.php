@@ -21,9 +21,10 @@ class ProducerCommand extends ContainerAwareCommand
         $this->setName('activemq:producer')
              ->setDescription('Send a message to a given queue.');
 
-        $this->addArgument('name', InputArgument::REQUIRED, 'Producer name');
-        $this->addOption('message', 'm', InputOption::VALUE_REQUIRED, 'Message to send');
-        $this->addOption('serializer', 'z', InputOption::VALUE_REQUIRED, 'Serialize message (serialize, json)');
+        $this->addArgument('name', InputArgument::REQUIRED, 'Producer name')
+             ->addOption('message', 'm', InputOption::VALUE_REQUIRED, 'Message to send')
+             ->addOption('serializer', 'z', InputOption::VALUE_REQUIRED, 'Serialize message (serialize, json)')
+             ->addOption('route', 'r', InputOption::VALUE_OPTIONAL, 'Routing Key', '');
     }
 
     /**
@@ -89,7 +90,7 @@ class ProducerCommand extends ContainerAwareCommand
         {
             $msg = new Message($message);
 
-            $publisher->publish($msg);
+            $publisher->publish($msg, $input->getOption('route'));
             $output->writeln(
                     sprintf(
                         '<info>Message has been sent in %s ms</info>',

@@ -21,6 +21,7 @@ class ConsumerCommand extends ContainerAwareCommand
 
         $this->addArgument('name', InputArgument::REQUIRED, 'Consumer name');
         $this->addOption('messages', 'm', InputOption::VALUE_REQUIRED, 'Messages to consume', 0);
+        $this->addOption('route', 'r', InputOption::VALUE_OPTIONAL, 'Routing Key', '');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -32,6 +33,8 @@ class ConsumerCommand extends ContainerAwareCommand
                                    $input->getArgument('name')
                                )
                            );
+        
+        $consumer->setRoutingKey($input->getOption('route'));
         $consumer->consume($input->getOption('messages'));
     }
 }

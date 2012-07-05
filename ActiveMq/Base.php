@@ -10,6 +10,8 @@ use Overblog\ActiveMqBundle\Exception\ActiveMqException;
  */
 abstract class Base
 {
+    const SEPARATOR = '.';
+
     /**
      * Options
      * @var array $options
@@ -35,17 +37,30 @@ abstract class Base
 
     /**
      * Return destination string
+     * @param string $routing_key
      * @return string
      * @throws ActiveMqException
      */
-    public function getDestination()
+    public function getDestination($routing_key = null)
     {
         if(in_array($this->options['type'], array('queue', 'type')))
         {
-            return sprintf('/%s/%s',
+            $destination = sprintf('/%s/%s',
                     $this->options['type'],
                     $this->options['name']
                 );
+
+            if(!empty($routing_key))
+            {
+                if(preg_match('#>|\*$#', $destination))
+                {
+                    throw new ActiveMqException('Unable to set routing key with wildcard');
+                }
+
+                $destination .= self::SEPARATOR . $routing_key;
+            }
+
+            return $destination;
         }
         else
         {

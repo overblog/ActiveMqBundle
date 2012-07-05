@@ -77,12 +77,14 @@ class Message
             if(isset($this->$key))
             {
                 $this->$key = $value;
+                unset($headers[$key]);
             }
 
             // Clés JMSX
-            if(isset($this->{'JMSX' . $key}))
+            elseif(isset($this->{'JMSX' . $key}))
             {
                 $this->{'JMSX' . $key} = $value;
+                unset($headers[$key]);
             }
         }
 

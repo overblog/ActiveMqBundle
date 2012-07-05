@@ -20,6 +20,12 @@ class Consumer extends Base
     protected $handler;
 
     /**
+     * Routing key (concept from RabbitMQ)
+     * @var string
+     */
+    protected $routing_key;
+
+    /**
      * Init service
      * @param Connection $connection
      * @param ConsumerInterface $handler
@@ -32,11 +38,24 @@ class Consumer extends Base
         parent::__construct($connection, $options);
     }
 
+    /**
+     * Set routing key
+     * @param string $routing_key
+     */
+    public function setRoutingKey($routing_key)
+    {
+        $this->routing_key = $routing_key;
+    }
+
+    /**
+     * Consume messages
+     * @param int $msgAmount
+     */
     public function consume($msgAmount)
     {
         $stomp = $this->connection->getConnection();
 
-        $stomp->subscribe($this->getDestination());
+        $stomp->subscribe($this->getDestination($this->routing_key));
 
         // Infinite loop
         if($msgAmount <= 0) $msgAmount = -1;
