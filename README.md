@@ -1,4 +1,4 @@
-OverblogActiveMqBundle
+OverblogStompBundle
 ======================
 
-ActiveMQ Bundle for the Symfony2 web framework
+Stomp Bundle for ActiveMQ & Apollo for the Symfony2 web framework

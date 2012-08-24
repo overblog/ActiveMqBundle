@@ -1,5 +1,5 @@
 <?php
-namespace Overblog\ActiveMqBundle\Command;
+namespace Overblog\StompBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -7,7 +7,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\DialogHelper;
-use Overblog\ActiveMqBundle\ActiveMq\Message;
+use Overblog\StompBundle\Stomp\Message;
 
 /**
  * Description of ProducerCommand
@@ -18,7 +18,7 @@ class ProducerCommand extends ContainerAwareCommand
 {
     protected function configure()
 	{
-        $this->setName('activemq:producer')
+        $this->setName('stomp:producer')
              ->setDescription('Send a message to a given queue.');
 
         $this->addArgument('name', InputArgument::REQUIRED, 'Producer name')
@@ -68,7 +68,7 @@ class ProducerCommand extends ContainerAwareCommand
         $publisher = $this->getContainer()
                           ->get(
                                 sprintf(
-                                    'overblog_active_mq.publisher.%s',
+                                    'overblog_stomp.publisher.%s',
                                     $input->getArgument('name')
                                 )
                             );
@@ -116,7 +116,7 @@ class ProducerCommand extends ContainerAwareCommand
     protected function getDialogHelper()
     {
         $dialog = $this->getHelperSet()->get('dialog');
-        if (!$dialog || get_class($dialog) !== 'Overblog\DeployBundle\Command\Helper\DialogHelper') {
+        if (!$dialog) {
             $this->getHelperSet()->set($dialog = new DialogHelper());
         }
 

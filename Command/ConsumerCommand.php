@@ -1,5 +1,5 @@
 <?php
-namespace Overblog\ActiveMqBundle\Command;
+namespace Overblog\StompBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -16,7 +16,7 @@ class ConsumerCommand extends ContainerAwareCommand
 {
     protected function configure()
 	{
-        $this->setName('activemq:consumer')
+        $this->setName('stomp:consumer')
              ->setDescription('Consume a message from a given queue.');
 
         $this->addArgument('name', InputArgument::REQUIRED, 'Consumer name');
@@ -29,11 +29,11 @@ class ConsumerCommand extends ContainerAwareCommand
         $consumer = $this->getContainer()
                          ->get(
                                sprintf(
-                                   'overblog_active_mq.consumer.%s',
+                                   'overblog_stomp.consumer.%s',
                                    $input->getArgument('name')
                                )
                            );
-        
+
         $consumer->setRoutingKey($input->getOption('route'));
         $consumer->consume($input->getOption('messages'));
     }

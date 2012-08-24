@@ -1,7 +1,7 @@
 <?php
-namespace Overblog\ActiveMqBundle\ActiveMq;
+namespace Overblog\StompBundle\Stomp;
 
-use Overblog\ActiveMqBundle\ActiveMq\Message;
+use Overblog\StompBundle\Stomp\Message;
 
 /**
  * Description of Consumer
