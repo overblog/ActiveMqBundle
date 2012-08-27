@@ -1,6 +1,6 @@
 <?php
 
-namespace Overblog\StompBundle\DependencyInjection;
+namespace Overblog\ActiveMqBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
@@ -14,14 +14,14 @@ use Symfony\Component\DependencyInjection\Reference;
  *
  * To learn more see {@link http://symfony.com/doc/current/cookbook/bundles/extension.html}
  */
-class OverblogStompExtension extends Extension
+class OverblogActiveMqExtension extends Extension
 {
-    const CONNECTION_NAME = 'overblog_stomp.connection.%s';
-    const CONNECTION_CLASS = 'overblog_stomp.connection.class';
-    const PUBLISHER_NAME = 'overblog_stomp.publisher.%s';
-    const PUBLISHER_CLASS = 'overblog_stomp.publisher.class';
-    const CONSUMER_NAME = 'overblog_stomp.consumer.%s';
-    const CONSUMER_CLASS = 'overblog_stomp.consumer.class';
+    const CONNECTION_NAME = 'overblog_active_mq.connection.%s';
+    const CONNECTION_CLASS = 'overblog_active_mq.connection.class';
+    const PUBLISHER_NAME = 'overblog_active_mq.publisher.%s';
+    const PUBLISHER_CLASS = 'overblog_active_mq.publisher.class';
+    const CONSUMER_NAME = 'overblog_active_mq.consumer.%s';
+    const CONSUMER_CLASS = 'overblog_active_mq.consumer.class';
 
     /**
      * {@inheritDoc}

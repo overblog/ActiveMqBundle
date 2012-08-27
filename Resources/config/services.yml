@@ -1,4 +1,4 @@
 parameters:
-    overblog_stomp.publisher.class: Overblog\StompBundle\Stomp\Publisher
-    overblog_stomp.consumer.class: Overblog\StompBundle\Stomp\Consumer
-    overblog_stomp.connection.class: Overblog\StompBundle\Stomp\Connection
+    overblog_active_mq.publisher.class: Overblog\ActiveMqBundle\ActiveMq\Publisher
+    overblog_active_mq.consumer.class: Overblog\ActiveMqBundle\ActiveMq\Consumer
+    overblog_active_mq.connection.class: Overblog\ActiveMqBundle\ActiveMq\Connection

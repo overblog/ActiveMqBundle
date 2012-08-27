@@ -1,7 +1,7 @@
 <?php
-namespace Overblog\StompBundle\Stomp;
+namespace Overblog\ActiveMqBundle\ActiveMq;
 
-use Overblog\StompBundle\Exception\StompException;
+use Overblog\ActiveMqBundle\Exception\ActiveMqException;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
@@ -40,7 +40,7 @@ abstract class Base
      * Return destination string
      * @param string $routing_key
      * @return string
-     * @throws StompException
+     * @throws ActiveMqException
      */
     public function getDestination($routing_key = null)
     {
@@ -62,7 +62,7 @@ abstract class Base
         }
         else
         {
-            throw new StompException('Wrong destination type');
+            throw new ActiveMqException('Wrong destination type');
         }
     }
 

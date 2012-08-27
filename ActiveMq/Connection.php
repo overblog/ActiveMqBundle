@@ -1,5 +1,5 @@
 <?php
-namespace Overblog\StompBundle\Stomp;
+namespace Overblog\ActiveMqBundle\ActiveMq;
 
 /**
  * Handler for Stomp connections

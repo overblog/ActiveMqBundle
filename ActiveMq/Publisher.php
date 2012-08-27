@@ -1,10 +1,10 @@
 <?php
-namespace Overblog\StompBundle\Stomp;
+namespace Overblog\ActiveMqBundle\ActiveMq;
 
-use Overblog\StompBundle\Stomp\Base;
-use Overblog\StompBundle\Exception\StompException;
-use Overblog\StompBundle\Stomp\Message;
-use Overblog\StompBundle\Stomp\Connection;
+use Overblog\ActiveMqBundle\ActiveMq\Base;
+use Overblog\ActiveMqBundle\Exception\ActiveMqException;
+use Overblog\ActiveMqBundle\ActiveMq\Message;
+use Overblog\ActiveMqBundle\ActiveMq\Connection;
 
 /**
  * Description of Publisher
@@ -18,7 +18,7 @@ class Publisher extends Base
      * @param mixed $msg
      * @param string $routing_key
      * @return boolean
-     * @throws StompException
+     * @throws ActiveMqException
      */
     public function publish($msg, $routing_key = null)
     {
@@ -41,7 +41,7 @@ class Publisher extends Base
                 $msg->getMessageHeaders()
             ))
         {
-            throw new StompException('Unable to send message');
+            throw new ActiveMqException('Unable to send message');
         }
 
         return true;

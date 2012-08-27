@@ -1,5 +1,5 @@
 <?php
-namespace Overblog\StompBundle\Stomp;
+namespace Overblog\ActiveMqBundle\ActiveMq;
 
 use Symfony\Component\HttpFoundation\ParameterBag;
 

@@ -1,10 +1,10 @@
 <?php
-namespace Overblog\StompBundle\Stomp;
+namespace Overblog\ActiveMqBundle\ActiveMq;
 
-use Overblog\StompBundle\Stomp\Base;
-use Overblog\StompBundle\Stomp\Connection;
-use Overblog\StompBundle\Stomp\ConsumerInterface;
-use Overblog\StompBundle\Stomp\Message;
+use Overblog\ActiveMqBundle\ActiveMq\Base;
+use Overblog\ActiveMqBundle\ActiveMq\Connection;
+use Overblog\ActiveMqBundle\ActiveMq\ConsumerInterface;
+use Overblog\ActiveMqBundle\ActiveMq\Message;
 
 /**
  * Description of Consumer
