@@ -38,17 +38,28 @@ abstract class Base
 
     /**
      * Return destination string
+     * @param string $routing_key
+     * @param boolean $concat_key
      * @return string
      * @throws ActiveMqException
      */
-    public function getDestination()
+    public function getDestination($routing_key = null, $concat_key = false)
     {
         if(in_array($this->options->get('type'), array('queue', 'topic')))
         {
-            return sprintf('/%s/%s',
+            $destination = sprintf('/%s/%s',
                     $this->options->get('type'),
                     $this->options->get('name')
                 );
+
+            if(true === $concat_key && !empty($routing_key))
+            {
+                $destination = preg_replace('#\\' . self::SEPARATOR . '>|\*$#', '', $destination);
+
+                $destination .= self::SEPARATOR . $routing_key;
+            }
+
+            return $destination;
         }
         else
         {
@@ -58,10 +69,12 @@ abstract class Base
 
     /**
      * Purge given destination
+     * @param string $routing_key
+     * @param boolean $concat_key
      * @return type
      */
-    public function purge()
+    public function purge($routing_key = null, $concat_key = false)
     {
-        return $this->connection->purge($this->getDestination());
+        return $this->connection->purge($this->getDestination($routing_key, $concat_key));
     }
 }

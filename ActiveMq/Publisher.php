@@ -17,10 +17,11 @@ class Publisher extends Base
      * Publish Message in ActiveMQ
      * @param mixed $msg
      * @param string $routing_key
+     * @param boolean $concat_key
      * @return boolean
      * @throws ActiveMqException
      */
-    public function publish($msg, $routing_key = null)
+    public function publish($msg, $routing_key = null, $concat_key = false)
     {
         // Create object if text is send
         if(!is_object($msg))
@@ -36,7 +37,7 @@ class Publisher extends Base
 
         $stomp = $this->connection->getConnection();
 
-        if(!$stomp->send($this->getDestination($routing_key),
+        if(!$stomp->send($this->getDestination($routing_key, $concat_key),
                 $msg->getBody(),
                 $msg->getMessageHeaders()
             ))
