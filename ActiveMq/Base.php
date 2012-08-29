@@ -44,7 +44,7 @@ abstract class Base
      */
     public function getDestination($routing_key = null)
     {
-        if(in_array($this->options->get('type'), array('queue', 'type')))
+        if(in_array($this->options->get('type'), array('queue', 'topic')))
         {
             $destination = sprintf('/%s/%s',
                     $this->options->get('type'),
