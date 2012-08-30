@@ -4,7 +4,7 @@ namespace Overblog\ActiveMqBundle\ActiveMq;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
- * Description of Message
+ * Description of Active MQ Message
  *
  * @author Xavier HAUSHERR
  */
@@ -48,6 +48,32 @@ class Message
      * @var int
      */
     protected $groupSeq = 0;
+
+    /**
+     * The time in milliseconds that a message will wait
+     * before being scheduled to be delivered by the broker
+     * @var int
+     */
+    protected $scheduledDelay = 0;
+
+    /**
+     * The time in milliseconds to wait after the start time
+     * to wait before scheduling the message again
+     * @var int
+     */
+    protected $scheduledPeriod = 0;
+
+    /**
+     * The number of times to repeat scheduling a message for delivery
+     * @var int
+     */
+    protected $scheduledRepeat = 0;
+
+    /**
+     * Use a Cron entry to set the schedule
+     * @var string
+     */
+    protected $scheduledCron;
 
     /**
      * Additional headers
@@ -201,6 +227,82 @@ class Message
     }
 
     /**
+     * Get the time in milliseconds that a message will wait
+     * before being scheduled to be delivered by the broker
+     * @return int
+     */
+    public function getScheduledDelay()
+    {
+        return $this->scheduledDelay;
+    }
+
+    /**
+     * Set the time in milliseconds that a message will wait
+     * before being scheduled to be delivered by the broker
+     * @param int $scheduledDelay
+     */
+    public function setScheduledDelay($scheduledDelay)
+    {
+        $this->scheduledDelay = intval($scheduledDelay);
+    }
+
+    /**
+     * Get the time in milliseconds to wait after the start time
+     * to wait before scheduling the message again
+     * @return int
+     */
+    public function getScheduledPeriod()
+    {
+        return $this->scheduledPeriod;
+    }
+
+    /**
+     * Set the time in milliseconds to wait after the start time
+     * to wait before scheduling the message again
+     * @param int $scheduledPeriod
+     */
+    public function setScheduledPeriod($scheduledPeriod)
+    {
+        $this->scheduledPeriod = intval($scheduledPeriod);
+    }
+
+    /**
+     * Get the number of times to repeat scheduling a message for delivery
+     * @return int
+     */
+    public function getScheduledRepeat()
+    {
+        return $this->scheduledRepeat;
+    }
+
+    /**
+     * Set the number of times to repeat scheduling a message for delivery
+     * @param int $scheduledRepeat
+     */
+    public function setScheduledRepeat($scheduledRepeat)
+    {
+        $this->scheduledRepeat = intval($scheduledRepeat);
+    }
+
+    /**
+     * Get Cron entry used to set the schedule
+     * @return string
+     */
+    public function getScheduledCron()
+    {
+        return $this->scheduledCron;
+    }
+
+    /**
+     * Use a Cron entry to set the schedule
+     * @param string $scheduledCron
+     */
+    public function setScheduledCron($scheduledCron)
+    {
+        $this->scheduledCron = $scheduledCron;
+    }
+
+    /**
      * Return message options in header format
      * @return array
      */
@@ -234,6 +336,26 @@ class Message
         if($this->groupSeq != 0)
         {
             $header['JMSXGroupSeq'] = $this->groupSeq;
+        }
+
+        if($this->scheduledDelay != 0)
+        {
+            $header['AMQ_SCHEDULED_DELAY'] = $this->scheduledDelay;
+        }
+
+        if($this->scheduledPeriod != 0)
+        {
+            $header['AMQ_SCHEDULED_PERIOD'] = $this->scheduledPeriod;
+        }
+
+        if($this->scheduledRepeat != 0)
+        {
+            $header['AMQ_SCHEDULED_REPEAT'] = $this->scheduledRepeat;
+        }
+
+        if(!is_null($this->scheduledCron) && !empty($this->scheduledCron))
+        {
+            $header['AMQ_SCHEDULED_CRON'] = $this->scheduledCron;
         }
 
         // Add additional headers
