@@ -133,7 +133,7 @@ class Message
      */
     public function getBody()
     {
-        return $this->body;
+        return (string)$this->body;
     }
 
     /**
