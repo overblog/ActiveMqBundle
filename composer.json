@@ -15,7 +15,7 @@
     },
     "target-dir": "Overblog/ActiveMqBundle",
     "autoload": {
-        "psr-0": {"ActiveMqBundle": ""}
+        "psr-0": {"Overblog\\ActiveMqBundle": ""}
     },
     "minimum-stability": "dev"
 }
