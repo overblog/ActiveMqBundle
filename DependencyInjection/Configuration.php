@@ -31,6 +31,7 @@ class Configuration implements ConfigurationInterface
                             ->scalarNode('port')->defaultValue(61613)->end()
                             ->scalarNode('user')->defaultNull()->end()
                             ->scalarNode('password')->defaultNull()->end()
+                            ->scalarNode('useAsyncSend')->defaultTrue()->end()
                         ->end()
                     ->end()
                 ->end()

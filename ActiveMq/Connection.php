@@ -61,8 +61,17 @@ class Connection
      */
     protected function getBrokerUri()
     {
+        if(true === $this->options['useAsyncSend'])
+        {
+            $uri = 'tcp://%s:%s?useAsyncSend=true';
+        }
+        else
+        {
+            $uri = 'tcp://%s:%s';
+        }
+
         return sprintf(
-                'tcp://%s:%s',
+                $uri,
                 $this->options['host'],
                 $this->options['port']
             );
