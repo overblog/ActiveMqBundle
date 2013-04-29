@@ -32,6 +32,8 @@ class Configuration implements ConfigurationInterface
                             ->scalarNode('user')->defaultNull()->end()
                             ->scalarNode('password')->defaultNull()->end()
                             ->scalarNode('useAsyncSend')->defaultTrue()->end()
+                            ->scalarNode('startupMaxReconnectAttempts')->defaultNull()->end()
+                            ->scalarNode('maxReconnectAttempts')->defaultNull()->end()
                         ->end()
                     ->end()
                 ->end()

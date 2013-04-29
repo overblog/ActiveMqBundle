@@ -61,13 +61,31 @@ class Connection
      */
     protected function getBrokerUri()
     {
+        $options = array();
+
+        // Base URI
+        $uri = 'tcp://%s:%s';
+
         if(true === $this->options['useAsyncSend'])
         {
-            $uri = 'tcp://%s:%s?useAsyncSend=true';
+            $options['useAsyncSend'] = 'true';
         }
-        else
+
+        if(!is_null($this->options['startupMaxReconnectAttempts']))
         {
-            $uri = 'tcp://%s:%s';
+            $options['startupMaxReconnectAttempts'] =
+                    $this->options['startupMaxReconnectAttempts'];
+        }
+
+        if(!is_null($this->options['maxReconnectAttempts']))
+        {
+            $options['maxReconnectAttempts'] =
+                    $this->options['maxReconnectAttempts'];
+        }
+
+        if(count($options) > 0)
+        {
+            $uri.= '?' . http_build_query($options);
         }
 
         return sprintf(
