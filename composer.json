@@ -1,7 +1,7 @@
 {
     "name": "overblog/activemq-bundle",
     "description": "OverBlog ActiveMQ Bundle",
-    "homepage": "https://github.com/ebuzzing/OverblogActiveMqBundle.git",
+    "homepage": "https://github.com/overblog/ActiveMqBundle.git",
     "type": "library",
     "authors": [
         {
