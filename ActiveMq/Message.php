@@ -11,6 +11,16 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 class Message
 {
     /**
+     * Message Type Text (default)
+     */
+    const TYPE_TEXT = 'text';
+
+    /**
+     * Message Type Bytes
+     */
+    const TYPE_BYTES = 'bytes';
+
+    /**
      * Message body
      * @var string
      */
@@ -300,6 +310,38 @@ class Message
     public function setScheduledCron($scheduledCron)
     {
         $this->scheduledCron = $scheduledCron;
+    }
+
+    /**
+     * Return message Type
+     * @return string
+     */
+    public function getMessageType()
+    {
+        if($this->headers->has('amq-msg-type'))
+        {
+            return $this->headers->get('amq-msg-type');
+        }
+        else
+        {
+            return self::TYPE_TEXT;
+        }
+    }
+
+    /**
+     * Set message type to text
+     */
+    public function setAsTextMessage()
+    {
+        $this->headers->set('amq-msg-type', self::TYPE_TEXT);
+    }
+
+    /**
+     * Set message type to bytes
+     */
+    public function setAsBytesMessage()
+    {
+        $this->headers->set('amq-msg-type', self::TYPE_BYTES);
     }
 
     /**
