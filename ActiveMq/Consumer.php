@@ -62,7 +62,7 @@ class Consumer extends Base
 
         while($msgAmount != 0)
         {
-            if($stomp->hasFrame())
+            if($stomp->hasFrameToRead())
             {
                 // Inject frame into ActimeMQ message
                 $frame = $stomp->readFrame();
