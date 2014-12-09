@@ -54,6 +54,7 @@ class Consumer extends Base
     public function consume($msgAmount)
     {
         $stomp = $this->connection->getConnection();
+        $id = $this->getHeaders()['id'];
 
         $stomp->subscribe($this->getDestination($this->routing_key), $this->getHeaders());
 
@@ -77,7 +78,7 @@ class Consumer extends Base
             }
         }
 
-        $stomp->unsubscribe($this->getDestination());
+        $stomp->unsubscribe($this->getDestination(), array('id' => $id));
     }
 
     /**
@@ -86,7 +87,9 @@ class Consumer extends Base
      */
     protected function getHeaders()
     {
-        $headers = array();
+        $headers = array(
+            'id' => $this->getDestination($this->routing_key) . microtime(true)
+        );
 
         if($this->options->has('prefetchSize'))
         {

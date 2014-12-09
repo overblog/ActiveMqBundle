@@ -136,18 +136,19 @@ class Connection
     public function purge($queue)
     {
         $stomp = $this->getConnection();
+        $header = array('id' => sprintf('purge:%s', $queue));
 
-        // No need to wait if there is no messages in queue
-        $stomp->setReadTimeout(0, 0);
+        // No need to wait more than 1 ms if there is no messages in queue
+        $stomp->setReadTimeout(0, 1);
 
-        $stomp->subscribe($queue);
+        $stomp->subscribe($queue, $header);
 
         while($stomp->hasFrameToRead())
         {
             $stomp->ack($stomp->readFrame());
         }
 
-        $stomp->unsubscribe($queue);
+        $stomp->unsubscribe($queue, $header);
 
         // Disconnect & delete connection
         $stomp->disconnect();
