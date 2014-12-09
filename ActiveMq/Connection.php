@@ -137,7 +137,7 @@ class Connection
     {
         $stomp = $this->getConnection();
 
-	// No need to wait if there is no messages in queue
+        // No need to wait if there is no messages in queue
         $stomp->setReadTimeout(0, 0);
 
         $stomp->subscribe($queue);
@@ -148,5 +148,9 @@ class Connection
         }
 
         $stomp->unsubscribe($queue);
+
+        // Disconnect & delete connection
+        $stomp->disconnect();
+        $this->connection = null;
     }
 }
