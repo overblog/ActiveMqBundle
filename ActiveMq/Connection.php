@@ -137,6 +137,9 @@ class Connection
     {
         $stomp = $this->getConnection();
 
+	// No need to wait if there is no messages in queue
+        $stomp->setReadTimeout(0, 0);
+
         $stomp->subscribe($queue);
 
         while($stomp->hasFrameToRead())
