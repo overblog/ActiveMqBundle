@@ -55,14 +55,6 @@ class Connection
         return $this->connection;
     }
 
-    /**
-     * Close connection
-     */
-    public function close()
-    {
-        unset($this->connection);
-    }
-
     protected function getConnectionFactory()
     {
         if(count($this->options['servers']) == 1)
@@ -151,7 +143,18 @@ class Connection
         $stomp->unsubscribe($queue, $header);
 
         // Disconnect & delete connection
-        $stomp->disconnect();
-        $this->connection = null;
+        $this->close();
+    }
+
+    /**
+     * Close the connection
+     */
+    public function close()
+    {
+        if(!is_null($this->connection))
+        {
+            $this->connection->disconnect();
+            $this->connection = null;
+        }
     }
 }

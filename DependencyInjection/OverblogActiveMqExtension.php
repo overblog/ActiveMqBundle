@@ -22,6 +22,7 @@ class OverblogActiveMqExtension extends Extension
     const PUBLISHER_CLASS = 'overblog_active_mq.publisher.class';
     const CONSUMER_NAME = 'overblog_active_mq.consumer.%s';
     const CONSUMER_CLASS = 'overblog_active_mq.consumer.class';
+    const TAG = 'activemq.connection';
 
     /**
      * {@inheritDoc}
@@ -51,6 +52,10 @@ class OverblogActiveMqExtension extends Extension
         {
             $this->loadConsumer($name, $consumer, $container);
         }
+
+        $container->setParameter(self::TAG,  array_keys(
+                $container->findTaggedServiceIds(self::TAG)
+            ));
     }
 
     /**
@@ -66,6 +71,7 @@ class OverblogActiveMqExtension extends Extension
         );
 
         $clientDef->addArgument($connection);
+        $clientDef->addTag(self::TAG);
 
         $container->setDefinition(
             sprintf(self::CONNECTION_NAME, $name),
