@@ -130,8 +130,8 @@ class Connection
         $stomp = $this->getConnection();
         $header = array('id' => sprintf('purge:%s', $queue));
 
-        // No need to wait more than 1 ms if there is no messages in queue
-        $stomp->setReadTimeout(0, 1);
+        // No need to wait more than 1s if there is no messages in queue
+        $stomp->setReadTimeout(1, 0);
 
         $stomp->subscribe($queue, $header);
 
