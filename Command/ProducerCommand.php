@@ -2,12 +2,14 @@
 namespace Overblog\ActiveMqBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Helper\QuestionHelper;
+use Symfony\Component\Console\Helper\SymfonyQuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Helper\DialogHelper;
 use Overblog\ActiveMqBundle\ActiveMq\Message;
+use Symfony\Component\Console\Question\Question;
 
 /**
  * Description of ProducerCommand
@@ -17,14 +19,14 @@ use Overblog\ActiveMqBundle\ActiveMq\Message;
 class ProducerCommand extends ContainerAwareCommand
 {
     protected function configure()
-	{
+    {
         $this->setName('activemq:producer')
-             ->setDescription('Send a message to a given queue.');
+            ->setDescription('Send a message to a given queue.');
 
         $this->addArgument('name', InputArgument::REQUIRED, 'Producer name')
-             ->addOption('message', 'm', InputOption::VALUE_REQUIRED, 'Message to send')
-             ->addOption('serializer', 'z', InputOption::VALUE_REQUIRED, 'Serialize message (serialize, json)')
-             ->addOption('route', 'r', InputOption::VALUE_OPTIONAL, 'Routing Key', '');
+            ->addOption('message', 'm', InputOption::VALUE_REQUIRED, 'Message to send')
+            ->addOption('serializer', 'z', InputOption::VALUE_REQUIRED, 'Serialize message (serialize, json)')
+            ->addOption('route', 'r', InputOption::VALUE_OPTIONAL, 'Routing Key', '');
     }
 
     /**
@@ -34,16 +36,16 @@ class ProducerCommand extends ContainerAwareCommand
      */
     protected function interact(InputInterface $input, OutputInterface $output)
     {
-        $dialog = $this->getDialogHelper();
+        $questionHelper = $this->getQuestionHelper();
 
         if(!$input->getOption('message'))
         {
             $input->setOption(
-                    'message',
-                    $dialog->ask(
-                            $output,
-                            '<comment>Enter the message to send: </comment>',
-                            $input->getOption('message')
+                'message',
+                $questionHelper->ask(
+                    $input,
+                    $output,
+                    new Question('<comment>Enter the message to send: </comment>')
                 ));
         }
     }
@@ -52,9 +54,10 @@ class ProducerCommand extends ContainerAwareCommand
      * Send the message
      * @param InputInterface $input
      * @param OutputInterface $output
+     * @return void
      */
     protected function execute(InputInterface $input, OutputInterface $output)
-	{
+    {
         $time_start = microtime(true);
 
         $message = $input->getOption('message');
@@ -66,12 +69,12 @@ class ProducerCommand extends ContainerAwareCommand
         }
 
         $publisher = $this->getContainer()
-                          ->get(
-                                sprintf(
-                                    'overblog_active_mq.publisher.%s',
-                                    $input->getArgument('name')
-                                )
-                            );
+            ->get(
+                sprintf(
+                    'overblog_active_mq.publisher.%s',
+                    $input->getArgument('name')
+                )
+            );
 
         // Serializer
         switch($input->getOption('serializer'))
@@ -92,35 +95,36 @@ class ProducerCommand extends ContainerAwareCommand
 
             $publisher->publish($msg, $input->getOption('route'));
             $output->writeln(
-                    sprintf(
-                        '<info>Message has been sent in %s ms</info>',
-                        round(microtime(true) - $time_start, 3)
-                    )
-                );
+                sprintf(
+                    '<info>Message has been sent in %s ms</info>',
+                    round(microtime(true) - $time_start, 3)
+                )
+            );
         }
         catch(\Exception $e)
         {
             $output->writeln(
-                    sprintf(
-                        '<error>Error while sending message: %s</error>',
-                        $e->getMessage()
-                    )
-                );
+                sprintf(
+                    '<error>Error while sending message: %s</error>',
+                    $e->getMessage()
+                )
+            );
         }
     }
 
     /**
-     * Replace standard dialog helper
-     * @return DialogHelper
+     * Replace standard question helper
+     * @return SymfonyQuestionHelper
      */
-    protected function getDialogHelper()
+    protected function getQuestionHelper()
     {
-        $dialog = $this->getHelperSet()->get('dialog');
-        if (!$dialog || get_class($dialog) !== 'Overblog\DeployBundle\Command\Helper\DialogHelper') {
-            $this->getHelperSet()->set($dialog = new DialogHelper());
+        $questionHelper = $this->getHelperSet()->get('question');
+
+        //@todo Update the Deploy project wich have a strong dependance with this bundle
+        if (!$questionHelper /*|| get_class($questionHelper) !== 'Overblog\DeployBundle\Command\Helper\DialogHelper'*/) {
+            $this->getHelperSet()->set($questionHelper = new QuestionHelper());
         }
 
-        return $dialog;
+        return $questionHelper;
     }
 }
-
