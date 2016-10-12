@@ -73,7 +73,7 @@ class Configuration implements ConfigurationInterface
                                 ->children()
                                     ->scalarNode('type')->defaultValue('queue')->end()
                                     ->scalarNode('name')->isRequired()->end()
-                                    ->scalarNode('prefetchSize')->defaultNull()->end()
+                                    ->scalarNode('prefetchSize')->defaultValue(1)->end()
                                 ->end()
                             ->end()
                         ->end()
