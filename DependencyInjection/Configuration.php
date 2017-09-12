@@ -40,6 +40,7 @@ class Configuration implements ConfigurationInterface
                                         ->scalarNode('useAsyncSend')->defaultTrue()->end()
                                         ->scalarNode('startupMaxReconnectAttempts')->defaultNull()->end()
                                         ->scalarNode('maxReconnectAttempts')->defaultNull()->end()
+                                        ->scalarNode('separator')->defaultValue('.')->end()
                                     ->end()
                                 ->end()
                             ->end()

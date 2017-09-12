@@ -11,8 +11,6 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  */
 abstract class Base
 {
-    protected $separator = '.';
-
     /**
      * Options
      * @var array $options
@@ -37,16 +35,6 @@ abstract class Base
     }
 
     /**
-     * @param string $separator
-     * @return $this
-     */
-    public function setSeparator($separator)
-    {
-        $this->separator = $separator;
-        return $this;
-    }
-
-    /**
      * Return destination string
      * @param string $routing_key
      * @param boolean $concat_key
@@ -64,9 +52,9 @@ abstract class Base
 
             if(true === $concat_key && !empty($routing_key))
             {
-                $destination = preg_replace('#\\' . $this->separator . '>|\*$#', '', $destination);
+                $destination = preg_replace('#\\' . $this->options['separator'] . '>|\*$#', '', $destination);
 
-                $destination .= $this->separator . $routing_key;
+                $destination .= $this->options['separator'] . $routing_key;
             }
 
             return $destination;
