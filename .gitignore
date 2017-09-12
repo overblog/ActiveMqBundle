@@ -13,3 +13,7 @@ app/config/parameters.ini
 
 # composer
 composer.lock
+composer.phar
+
+# PhpStorm
+.idea
