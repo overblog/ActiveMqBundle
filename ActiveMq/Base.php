@@ -52,9 +52,9 @@ abstract class Base
 
             if(true === $concat_key && !empty($routing_key))
             {
-                $destination = preg_replace('#\\' . $this->options['separator'] . '>|\*$#', '', $destination);
+                $destination = preg_replace('#\\' . $this->options->get('separator') . '>|\*$#', '', $destination);
 
-                $destination .= $this->options['separator'] . $routing_key;
+                $destination .= $this->options->get('separator') . $routing_key;
             }
 
             return $destination;
