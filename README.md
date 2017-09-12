@@ -1,4 +1,4 @@
 OverblogActiveMqBundle
 ======================
 
-ActiveMQ Bundle for the Symfony2 web framework
+ActiveMQ Bundle for the Symfony web framework

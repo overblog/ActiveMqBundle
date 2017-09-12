@@ -90,7 +90,7 @@ class Connection
         $options = array();
 
         // Base URI
-        $uri = 'tcp://%s:%s';
+        $uri = 'tcp://%s';
 
         if(true === $params['useAsyncSend'])
         {
@@ -116,8 +116,7 @@ class Connection
 
         return sprintf(
                 $uri,
-                $params['host'],
-                $params['port']
+                $params['uri']
             );
     }
 
