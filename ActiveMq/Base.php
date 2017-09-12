@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  */
 abstract class Base
 {
-    protected $separator;
+    protected $separator = '.';
 
     /**
      * Options
@@ -29,15 +29,22 @@ abstract class Base
      * Instanciate
      * @param Connection $connection
      * @param array $options
-     * @param string $separator
      */
-    public function __construct(Connection $connection, array $options, $separator = '.')
+    public function __construct(Connection $connection, array $options)
     {
         $this->connection = $connection;
         $this->options = new ParameterBag($options);
-        $this->separator = $separator;
     }
 
+    /**
+     * @param string $separator
+     * @return $this
+     */
+    public function setSeparator($separator)
+    {
+        $this->separator = $separator;
+        return $this;
+    }
 
     /**
      * Return destination string
