@@ -1,5 +1,5 @@
 {
-    "name": "overblog/activemq-bundle",
+    "name": "gemorroj/activemq-bundle",
     "description": "OverBlog ActiveMQ Bundle",
     "homepage": "https://github.com/overblog/ActiveMqBundle.git",
     "type": "library",
