@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  */
 abstract class Base
 {
-    const SEPARATOR = '.';
+    protected $separator;
 
     /**
      * Options
@@ -29,12 +29,15 @@ abstract class Base
      * Instanciate
      * @param Connection $connection
      * @param array $options
+     * @param string $separator
      */
-    public function __construct(Connection $connection, array $options)
+    public function __construct(Connection $connection, array $options, $separator = '.')
     {
         $this->connection = $connection;
         $this->options = new ParameterBag($options);
+        $this->separator = $separator;
     }
+
 
     /**
      * Return destination string
@@ -54,9 +57,9 @@ abstract class Base
 
             if(true === $concat_key && !empty($routing_key))
             {
-                $destination = preg_replace('#\\' . self::SEPARATOR . '>|\*$#', '', $destination);
+                $destination = preg_replace('#\\' . $this->separator . '>|\*$#', '', $destination);
 
-                $destination .= self::SEPARATOR . $routing_key;
+                $destination .= $this->separator . $routing_key;
             }
 
             return $destination;

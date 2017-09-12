@@ -25,12 +25,13 @@ class Consumer extends Base
      * @param Connection $connection
      * @param ConsumerInterface $handler
      * @param array $options
+     * @param string $separator
      */
-    public function __construct(Connection $connection, ConsumerInterface $handler, array $options)
+    public function __construct(Connection $connection, ConsumerInterface $handler, array $options, $separator = '.')
     {
         $this->handler = $handler;
 
-        parent::__construct($connection, $options);
+        parent::__construct($connection, $options, $separator);
     }
 
     /**
