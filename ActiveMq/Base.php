@@ -71,10 +71,9 @@ abstract class Base
      * Purge given destination
      * @param string $routing_key
      * @param boolean $concat_key
-     * @return type
      */
     public function purge($routing_key = null, $concat_key = false)
     {
-        return $this->connection->purge($this->getDestination($routing_key, $concat_key));
+        $this->connection->purge($this->getDestination($routing_key, $concat_key));
     }
 }

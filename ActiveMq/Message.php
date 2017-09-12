@@ -184,7 +184,7 @@ class Message
 
     /**
      * Set whether or not the message is persistent
-     * @param type $persistent
+     * @param boolean $persistent
      */
     public function setPersistent($persistent)
     {

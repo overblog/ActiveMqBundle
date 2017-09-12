@@ -1,8 +1,6 @@
 <?php
 namespace Overblog\ActiveMqBundle\ActiveMq;
 
-use Overblog\ActiveMqBundle\ActiveMq\Message;
-
 /**
  * Description of Consumer
  *
@@ -13,6 +11,6 @@ interface ConsumerInterface
     /**
      * Consume message
      */
-    function execute(Message $msg);
+    public function execute(Message $msg);
 }
 

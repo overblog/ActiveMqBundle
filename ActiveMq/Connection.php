@@ -14,7 +14,7 @@ class Connection
 {
     /**
      * Stomp connection handler
-     * @var Stomp
+     * @var StompConnection
      */
     protected $connection;
 
@@ -35,7 +35,7 @@ class Connection
 
     /**
      * Return and instanciate connection if needed
-     * @return Stomp
+     * @return StompConnection
      */
     public function getConnection()
     {
