@@ -1,11 +1,6 @@
 <?php
 namespace Overblog\ActiveMqBundle\ActiveMq;
 
-use Overblog\ActiveMqBundle\ActiveMq\Base;
-use Overblog\ActiveMqBundle\ActiveMq\Connection;
-use Overblog\ActiveMqBundle\ActiveMq\ConsumerInterface;
-use Overblog\ActiveMqBundle\ActiveMq\Message;
-
 /**
  * Description of Consumer
  *

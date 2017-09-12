@@ -1,9 +1,7 @@
 <?php
 namespace Overblog\ActiveMqBundle\ActiveMq;
 
-use Overblog\ActiveMqBundle\ActiveMq\Base;
 use Overblog\ActiveMqBundle\Exception\ActiveMqException;
-use Overblog\ActiveMqBundle\ActiveMq\Message;
 
 /**
  * Description of Publisher

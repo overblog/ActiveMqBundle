@@ -14,7 +14,7 @@ class Connection
 {
     /**
      * Stomp connection handler
-     * @var Stomp
+     * @var StompConnection
      */
     protected $connection;
 
@@ -35,7 +35,7 @@ class Connection
 
     /**
      * Return and instanciate connection if needed
-     * @return Stomp
+     * @return StompConnection
      */
     public function getConnection()
     {
@@ -90,7 +90,7 @@ class Connection
         $options = array();
 
         // Base URI
-        $uri = 'tcp://%s:%s';
+        $uri = 'tcp://' . $params['uri'];
 
         if(true === $params['useAsyncSend'])
         {
@@ -114,11 +114,7 @@ class Connection
             $uri.= '?' . http_build_query($options);
         }
 
-        return sprintf(
-                $uri,
-                $params['host'],
-                $params['port']
-            );
+        return $uri;
     }
 
     /**

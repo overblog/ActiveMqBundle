@@ -10,13 +10,12 @@
         }
     ],
     "require": {
-        "php": ">=5.3.0",
-        "centraldesktop/stomp": "1.0.*",
-	"symfony/symfony": "~2.5|~3.0"
+        "php": ">=5.3.3",
+        "centraldesktop/stomp": "2.0.*",
+        "symfony/symfony": "^2.8|^3.0"
     },
-    "target-dir": "Overblog/ActiveMqBundle",
+
     "autoload": {
-        "psr-0": {"Overblog\\ActiveMqBundle": ""}
-    },
-    "minimum-stability": "dev"
+        "psr-4": {"Overblog\\ActiveMqBundle\\": ""}
+    }
 }
