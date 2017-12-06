@@ -2,6 +2,7 @@
 
 namespace Overblog\ActiveMqBundle\DependencyInjection;
 
+use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
@@ -53,18 +54,18 @@ class OverblogActiveMqExtension extends Extension
             $this->loadConsumer($name, $consumer, $container);
         }
 
-        $container->setParameter(self::TAG,  array_keys(
-                $container->findTaggedServiceIds(self::TAG)
-            ));
+        $container->setParameter(self::TAG, array_keys(
+            $container->findTaggedServiceIds(self::TAG)
+        ));
     }
 
     /**
      * Load Stomp connections
-     * @param  $name
+     * @param string $name
      * @param array $connection
      * @param ContainerBuilder $container
      */
-    public function loadConnection($name, Array $connection, ContainerBuilder $container)
+    public function loadConnection($name, array $connection, ContainerBuilder $container)
     {
         $clientDef = new Definition(
             $container->getParameter(self::CONNECTION_CLASS)
@@ -77,52 +78,70 @@ class OverblogActiveMqExtension extends Extension
             sprintf(self::CONNECTION_NAME, $name),
             $clientDef
         );
+
+        //@see https://github.com/overblog/ActiveMqBundle/issues/9
+        $container->setAlias(
+            $clientDef->getClass(),
+            new Alias(sprintf(self::CONNECTION_NAME, $name), true)
+        );
     }
 
     /**
      * Load publisher client
      * @param string $name
-     * @param array $producer
+     * @param array $publisher
      * @param ContainerBuilder $container
      */
-    public function loadPublisher($name, Array $producer, ContainerBuilder $container)
+    public function loadPublisher($name, array $publisher, ContainerBuilder $container)
     {
         $clientDef = new Definition(
             $container->getParameter(self::PUBLISHER_CLASS)
         );
 
-        $clientDef  ->addArgument(new Reference(
-                        sprintf(self::CONNECTION_NAME, $producer['connection'])
-                    ))
-                    ->addArgument($producer['options']);
+        $clientDef->addArgument(new Reference(
+            sprintf(self::CONNECTION_NAME, $publisher['connection'])
+        ))
+            ->addArgument($publisher['options']);
 
         $container->setDefinition(
             sprintf(self::PUBLISHER_NAME, $name),
             $clientDef
+        );
+
+        //@see https://github.com/overblog/ActiveMqBundle/issues/9
+        $container->setAlias(
+            $clientDef->getClass(),
+            new Alias(sprintf(self::PUBLISHER_NAME, $name), true)
         );
     }
 
     /**
      * Load consumer
      * @param string $name
-     * @param array $producer
+     * @param array $consumer
      * @param ContainerBuilder $container
      */
-    public function loadConsumer($name, Array $consumer, ContainerBuilder $container)
+    public function loadConsumer($name, array $consumer, ContainerBuilder $container)
     {
         $clientDef = new Definition(
             $container->getParameter(self::CONSUMER_CLASS)
         );
 
-        $clientDef  ->addArgument(new Reference(
-                        sprintf(self::CONNECTION_NAME, $consumer['connection'])
-                    ))
-                    ->addArgument(new Reference($consumer['handler']))
-                    ->addArgument($consumer['options']);
+        $clientDef->addArgument(new Reference(
+            sprintf(self::CONNECTION_NAME, $consumer['connection'])
+        ))
+            ->addArgument(new Reference($consumer['handler']))
+            ->addArgument($consumer['options']);
 
         $container->setDefinition(
             sprintf(self::CONSUMER_NAME, $name),
             $clientDef
+        );
+
+        //@see https://github.com/overblog/ActiveMqBundle/issues/9
+        $container->setAlias(
+            $clientDef->getClass(),
+            new Alias(sprintf(self::CONSUMER_NAME, $name), true)
         );
     }
 }
