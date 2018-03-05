@@ -2,7 +2,7 @@
     "name": "overblog/activemq-bundle",
     "description": "OverBlog ActiveMQ Bundle",
     "homepage": "https://github.com/overblog/ActiveMqBundle.git",
-    "type": "library",
+    "type": "symfony-bundle",
     "authors": [
         {
           "name": "OverBlog",
