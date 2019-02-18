@@ -153,4 +153,9 @@ class Connection
             $this->connection = null;
         }
     }
+
+    public function __destruct()
+    {
+        $this->close();
+    }
 }

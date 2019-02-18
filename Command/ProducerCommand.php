@@ -3,7 +3,6 @@ namespace Overblog\ActiveMqBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Helper\QuestionHelper;
-use Symfony\Component\Console\Helper\SymfonyQuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
@@ -114,7 +113,7 @@ class ProducerCommand extends ContainerAwareCommand
 
     /**
      * Replace standard question helper
-     * @return SymfonyQuestionHelper
+     * @return QuestionHelper
      */
     protected function getQuestionHelper()
     {
