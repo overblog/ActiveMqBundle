@@ -10,9 +10,9 @@
         }
     ],
     "require": {
-        "php": ">=5.3.3",
+        "php": ">=5.6",
         "centraldesktop/stomp": "2.0.*",
-        "symfony/symfony": "^2.8|^3.0"
+        "symfony/framework-bundle": "^3.4 || ^4.0"
     },
 
     "autoload": {

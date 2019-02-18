@@ -8,5 +8,4 @@ namespace Overblog\ActiveMqBundle\Exception;
  */
 class ActiveMqException extends \Exception
 {
-
 }
