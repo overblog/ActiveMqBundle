@@ -20,10 +20,9 @@ class ConsumerCommand extends Command
      */
     private $consumers;
 
-    public function __construct(array $consumers = [])
+    public function addConsumer($name, Consumer $consumer)
     {
-        $this->consumers = $consumers;
-        parent::__construct();
+        $this->consumers[$name] = $consumer;
     }
 
     protected function configure()
@@ -38,13 +37,11 @@ class ConsumerCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $consumer = $this->getContainer()
-            ->get(
-                sprintf(
-                    'overblog_active_mq.consumer.%s',
-                    $input->getArgument('name')
-                )
-            );
+        $name = $input->getArgument('name');
+        if (!isset($this->consumers[$name])) {
+            throw new \InvalidArgumentException(sprintf('Consumer "%s" not found', $name));
+        }
+        $consumer = $this->consumers[$name];
 
         $consumer->setRoutingKey($input->getOption('route'));
         $consumer->consume($input->getOption('messages'));
