@@ -1,4 +1,8 @@
-parameters:
-    overblog_active_mq.publisher.class: Overblog\ActiveMqBundle\ActiveMq\Publisher
-    overblog_active_mq.consumer.class: Overblog\ActiveMqBundle\ActiveMq\Consumer
-    overblog_active_mq.connection.class: Overblog\ActiveMqBundle\ActiveMq\Connection
+services:
+    Overblog\ActiveMqBundle\Command\ConsumerCommand:
+        tags:
+            - { name: console.command, command: activemq:consumer }
+
+    Overblog\ActiveMqBundle\Command\ProducerCommand:
+        tags:
+            - { name: console.command, command: activemq:producer }

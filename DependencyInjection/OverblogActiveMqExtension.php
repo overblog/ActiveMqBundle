@@ -2,6 +2,10 @@
 
 namespace Overblog\ActiveMqBundle\DependencyInjection;
 
+use Overblog\ActiveMqBundle\ActiveMq\Connection;
+use Overblog\ActiveMqBundle\ActiveMq\Consumer;
+use Overblog\ActiveMqBundle\ActiveMq\Publisher;
+use Overblog\ActiveMqBundle\Command\ConsumerCommand;
 use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
@@ -17,14 +21,6 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 class OverblogActiveMqExtension extends Extension
 {
-    const CONNECTION_NAME = 'overblog_active_mq.connection.%s';
-    const CONNECTION_CLASS = 'overblog_active_mq.connection.class';
-    const PUBLISHER_NAME = 'overblog_active_mq.publisher.%s';
-    const PUBLISHER_CLASS = 'overblog_active_mq.publisher.class';
-    const CONSUMER_NAME = 'overblog_active_mq.consumer.%s';
-    const CONSUMER_CLASS = 'overblog_active_mq.consumer.class';
-    const TAG = 'activemq.connection';
-
     /**
      * {@inheritDoc}
      */
@@ -37,111 +33,78 @@ class OverblogActiveMqExtension extends Extension
         $loader->load('services.yml');
 
         // Register connections
-        foreach($config['connections'] as $name => $connection)
-        {
-            $this->loadConnection($name, $connection, $container);
+        foreach($config['connections'] as $name => $connection) {
+            $this->addConnection($name, $connection, $container);
         }
 
-        //Register publisher
-        foreach($config['publishers'] as $name => $producer)
-        {
-            $this->loadPublisher($name, $producer, $container);
+        // Register publishers
+        foreach($config['publishers'] as $name => $producer) {
+            $this->addPublisher($name, $producer, $container);
         }
 
-        //Register consumer
-        foreach($config['consumers'] as $name => $consumer)
-        {
-            $this->loadConsumer($name, $consumer, $container);
+        // Register consumers
+        foreach($config['consumers'] as $name => $consumer) {
+            $this->addConsumer($name, $consumer, $container);
         }
-
-        $container->setParameter(self::TAG, array_keys(
-            $container->findTaggedServiceIds(self::TAG)
-        ));
     }
 
-    /**
-     * Load Stomp connections
-     * @param string $name
-     * @param array $connection
-     * @param ContainerBuilder $container
-     */
-    public function loadConnection($name, array $connection, ContainerBuilder $container)
+    private function addConnection($name, array $connection, ContainerBuilder $container)
     {
-        $clientDef = new Definition(
-            $container->getParameter(self::CONNECTION_CLASS)
-        );
-
-        $clientDef->addArgument($connection);
-        $clientDef->addTag(self::TAG);
+        $definition = new Definition(Connection::class);
+        $definition
+            ->addArgument($connection)
+            ->addTag('activemq.connection')
+        ;
 
         $container->setDefinition(
-            sprintf(self::CONNECTION_NAME, $name),
-            $clientDef
+            $this->buildConnectionServiceId($name),
+            $definition
         );
 
         //@see https://github.com/overblog/ActiveMqBundle/issues/9
         $container->setAlias(
-            $clientDef->getClass(),
-            new Alias(sprintf(self::CONNECTION_NAME, $name), true)
+            $definition->getClass(),
+            new Alias($this->buildConnectionServiceId($name), true)
         );
     }
 
-    /**
-     * Load publisher client
-     * @param string $name
-     * @param array $publisher
-     * @param ContainerBuilder $container
-     */
-    public function loadPublisher($name, array $publisher, ContainerBuilder $container)
+    private function addPublisher($name, array $publisher, ContainerBuilder $container)
     {
-        $clientDef = new Definition(
-            $container->getParameter(self::PUBLISHER_CLASS)
-        );
-
-        $clientDef->addArgument(new Reference(
-            sprintf(self::CONNECTION_NAME, $publisher['connection'])
-        ))
-            ->addArgument($publisher['options']);
-
-        $container->setDefinition(
-            sprintf(self::PUBLISHER_NAME, $name),
-            $clientDef
-        );
+        $definition = new Definition(Publisher::class);
+        $definition
+            ->addArgument(new Reference($this->buildConnectionServiceId($publisher['connection'])))
+            ->addArgument($publisher['options'])
+            ->addTag('activemq.publisher');
+        $serviceID = sprintf('%s.publisher.%s', $this->getAlias(), $name);
+        $container->setDefinition($serviceID, $definition);
+        $container->getDefinition(ConsumerCommand::class)
+            ->addMethodCall('addPublisher', [$name, new Reference($serviceID)]);
 
         //@see https://github.com/overblog/ActiveMqBundle/issues/9
-        $container->setAlias(
-            $clientDef->getClass(),
-            new Alias(sprintf(self::PUBLISHER_NAME, $name), true)
-        );
+        $container->setAlias($definition->getClass(), new Alias($serviceID, true));
     }
 
-    /**
-     * Load consumer
-     * @param string $name
-     * @param array $consumer
-     * @param ContainerBuilder $container
-     */
-    public function loadConsumer($name, array $consumer, ContainerBuilder $container)
+    private function addConsumer($name, array $consumer, ContainerBuilder $container)
     {
-        $clientDef = new Definition(
-            $container->getParameter(self::CONSUMER_CLASS)
-        );
-
-        $clientDef->addArgument(new Reference(
-            sprintf(self::CONNECTION_NAME, $consumer['connection'])
-        ))
+        $definition = new Definition(Consumer::class);
+        $definition
+            ->addArgument(new Reference($this->buildConnectionServiceId($consumer['connection'])))
             ->addArgument(new Reference($consumer['handler']))
-            ->addArgument($consumer['options']);
-
-        $container->setDefinition(
-            sprintf(self::CONSUMER_NAME, $name),
-            $clientDef
-        );
+            ->addArgument($consumer['options'])
+            ->addTag('activemq.consumer');
+        $serviceID = sprintf('%s.consumer.%s', $this->getAlias(), $name);
+        $container->setDefinition($serviceID, $definition);
+        $container->getDefinition(ConsumerCommand::class)
+            ->addMethodCall('addConsumer', [$name, new Reference($serviceID)]);
 
         //@see https://github.com/overblog/ActiveMqBundle/issues/9
-        $container->setAlias(
-            $clientDef->getClass(),
-            new Alias(sprintf(self::CONSUMER_NAME, $name), true)
-        );
+        $container->setAlias($definition->getClass(), new Alias($serviceID, true));
+
+        return $definition;
+    }
+
+    private function buildConnectionServiceId($name)
+    {
+        return sprintf('%s.connection.%s', $this->getAlias(), $name);
     }
 }
