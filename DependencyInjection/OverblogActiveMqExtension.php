@@ -6,6 +6,7 @@ use Overblog\ActiveMqBundle\ActiveMq\Connection;
 use Overblog\ActiveMqBundle\ActiveMq\Consumer;
 use Overblog\ActiveMqBundle\ActiveMq\Publisher;
 use Overblog\ActiveMqBundle\Command\ConsumerCommand;
+use Overblog\ActiveMqBundle\Command\ProducerCommand;
 use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
@@ -77,7 +78,7 @@ class OverblogActiveMqExtension extends Extension
             ->addTag('activemq.publisher');
         $serviceID = sprintf('%s.publisher.%s', $this->getAlias(), $name);
         $container->setDefinition($serviceID, $definition);
-        $container->getDefinition(ConsumerCommand::class)
+        $container->getDefinition(ProducerCommand::class)
             ->addMethodCall('addPublisher', [$name, new Reference($serviceID)]);
 
         //@see https://github.com/overblog/ActiveMqBundle/issues/9
