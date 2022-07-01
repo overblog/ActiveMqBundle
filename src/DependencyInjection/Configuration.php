@@ -21,7 +21,7 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder(self::NAME);
-        $rootNode = self::getRootNodeWithoutDeprecation($treeBuilder, self::NAME);
+        $rootNode = $treeBuilder->getRootNode();
 
         $rootNode
             ->children()
@@ -110,18 +110,5 @@ class Configuration implements ConfigurationInterface
         ;
 
         return $treeBuilder;
-    }
-
-    /**
-     * @param TreeBuilder $builder
-     * @param string|null $name
-     * @param string      $type
-     *
-     * @return ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
-     */
-    private static function getRootNodeWithoutDeprecation(TreeBuilder $builder, $name, $type = 'array')
-    {
-        // BC layer for symfony/config 4.1 and older
-        return \method_exists($builder, 'getRootNode') ? $builder->getRootNode() : $builder->root($name, $type);
     }
 }
