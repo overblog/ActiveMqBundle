@@ -14,5 +14,5 @@ interface ConsumerInterface
     /**
      * Consume message
      */
-    public function execute(Message $msg);
+    public function execute(Message $msg): bool;
 }

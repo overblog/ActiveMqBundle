@@ -24,6 +24,7 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder(self::NAME);
         $rootNode = $treeBuilder->getRootNode();
 
+        // @phpstan-ignore-next-line
         $rootNode
             ->children()
                 ->arrayNode('connections')

@@ -383,7 +383,7 @@ class Message
         $header = [];
 
         // Send only header if default value is changed
-        if (0 != $this->expires) {
+        if (0 !== $this->expires) {
             $header['expires'] =
                 (float) round(microtime(true) * 1000) + $this->expires;
         }
@@ -393,31 +393,31 @@ class Message
             $header['persistent'] = 'true';
         }
 
-        if (4 != $this->priority) {
+        if (4 !== $this->priority) {
             $header['priority'] = $this->priority;
         }
 
-        if (!is_null($this->groupId) && !empty($this->groupId)) {
+        if (!empty($this->groupId)) {
             $header['JMSXGroupID'] = $this->groupId;
         }
 
-        if (0 != $this->groupSeq) {
+        if (0 !== $this->groupSeq) {
             $header['JMSXGroupSeq'] = $this->groupSeq;
         }
 
-        if (0 != $this->scheduledDelay) {
+        if (0 !== $this->scheduledDelay) {
             $header['AMQ_SCHEDULED_DELAY'] = $this->scheduledDelay;
         }
 
-        if (0 != $this->scheduledPeriod) {
+        if (0 !== $this->scheduledPeriod) {
             $header['AMQ_SCHEDULED_PERIOD'] = $this->scheduledPeriod;
         }
 
-        if (0 != $this->scheduledRepeat) {
+        if (0 !== $this->scheduledRepeat) {
             $header['AMQ_SCHEDULED_REPEAT'] = $this->scheduledRepeat;
         }
 
-        if (!is_null($this->scheduledCron) && !empty($this->scheduledCron)) {
+        if (!empty($this->scheduledCron)) {
             $header['AMQ_SCHEDULED_CRON'] = $this->scheduledCron;
         }
 

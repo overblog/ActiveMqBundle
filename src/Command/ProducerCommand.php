@@ -28,7 +28,7 @@ class ProducerCommand extends Command
      */
     private $publishers;
 
-    public function addPublisher($name, Publisher $consumer): void
+    public function addPublisher(string $name, Publisher $consumer): void
     {
         $this->publishers[$name] = $consumer;
     }
@@ -49,26 +49,24 @@ class ProducerCommand extends Command
      */
     protected function interact(InputInterface $input, OutputInterface $output): void
     {
-        $questionHelper = $this->getQuestionHelper();
+        if ($helpers = $this->getHelperSet()) {
+            /** @var QuestionHelper $questionHelper */
+            $questionHelper = $helpers->get('question');
 
-        if (!$input->getOption('message')) {
-            $input->setOption(
-                'message',
-                $questionHelper->ask(
-                    $input,
-                    $output,
-                    new Question('<comment>Enter the message to send: </comment>')
-                )
-            );
+            if (!$input->getOption('message')) {
+                $input->setOption(
+                    'message',
+                    $questionHelper->ask(
+                        $input,
+                        $output,
+                        new Question('<comment>Enter the message to send: </comment>')
+                    )
+                );
+            }
         }
     }
 
-    /**
-     * Send the message
-     *
-     * @return void
-     */
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $time_start = microtime(true);
 
@@ -77,7 +75,7 @@ class ProducerCommand extends Command
         if (empty($message)) {
             $output->writeln('<error>Message cannot be empty</error>');
 
-            return;
+            return self::FAILURE;
         }
 
         $name = $input->getArgument('name');
@@ -115,23 +113,10 @@ class ProducerCommand extends Command
                     $e->getMessage()
                 )
             );
-        }
-    }
 
-    /**
-     * Replace standard question helper
-     *
-     * @return QuestionHelper
-     */
-    protected function getQuestionHelper()
-    {
-        $questionHelper = $this->getHelperSet()->get('question');
-
-        //@todo Update the Deploy project wich have a strong dependance with this bundle
-        if (!$questionHelper /*|| get_class($questionHelper) !== 'Overblog\DeployBundle\Command\Helper\DialogHelper'*/) {
-            $this->getHelperSet()->set($questionHelper = new QuestionHelper());
+            return self::FAILURE;
         }
 
-        return $questionHelper;
+        return self::SUCCESS;
     }
 }

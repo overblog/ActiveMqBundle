@@ -17,7 +17,7 @@ abstract class Base
     /**
      * Options
      *
-     * @var array
+     * @var ParameterBag
      */
     protected $options;
 

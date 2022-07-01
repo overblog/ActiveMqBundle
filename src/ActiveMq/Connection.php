@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\ActiveMqBundle\ActiveMq;
 
 use CentralDesktop\Stomp\Connection as StompConnection;
+use CentralDesktop\Stomp\ConnectionFactory\FactoryI;
 use CentralDesktop\Stomp\ConnectionFactory\Failover;
 use CentralDesktop\Stomp\ConnectionFactory\Simple;
 
@@ -18,7 +19,7 @@ class Connection
     /**
      * Stomp connection handler
      *
-     * @var StompConnection
+     * @var StompConnection|null
      */
     protected $connection;
 
@@ -59,9 +60,12 @@ class Connection
         return $this->connection;
     }
 
-    protected function getConnectionFactory()
+    /**
+     * @return Simple|Failover
+     */
+    protected function getConnectionFactory(): FactoryI
     {
-        if (1 == count($this->options['servers'])) {
+        if (1 === count($this->options['servers'])) {
             // Single connection
             return new Simple($this->getBrokerUri(
                 current($this->options['servers'])

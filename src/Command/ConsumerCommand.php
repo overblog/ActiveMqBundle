@@ -24,7 +24,7 @@ class ConsumerCommand extends Command
      */
     private $consumers;
 
-    public function addConsumer($name, Consumer $consumer): void
+    public function addConsumer(string $name, Consumer $consumer): void
     {
         $this->consumers[$name] = $consumer;
     }
@@ -39,7 +39,7 @@ class ConsumerCommand extends Command
         $this->addOption('route', 'r', InputOption::VALUE_OPTIONAL, 'Routing Key', '');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $name = $input->getArgument('name');
         if (!isset($this->consumers[$name])) {
@@ -49,5 +49,7 @@ class ConsumerCommand extends Command
 
         $consumer->setRoutingKey($input->getOption('route'));
         $consumer->consume($input->getOption('messages'));
+
+        return self::SUCCESS;
     }
 }

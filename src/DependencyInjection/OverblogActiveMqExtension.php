@@ -51,7 +51,7 @@ class OverblogActiveMqExtension extends Extension
         }
     }
 
-    private function addConnection($name, array $connection, ContainerBuilder $container): void
+    private function addConnection(string $name, array $connection, ContainerBuilder $container): void
     {
         $definition = new Definition(Connection::class);
         $definition
@@ -71,7 +71,7 @@ class OverblogActiveMqExtension extends Extension
         );
     }
 
-    private function addPublisher($name, array $publisher, ContainerBuilder $container): void
+    private function addPublisher(string $name, array $publisher, ContainerBuilder $container): void
     {
         $definition = new Definition(Publisher::class);
         $definition
@@ -87,7 +87,7 @@ class OverblogActiveMqExtension extends Extension
         $container->setAlias($definition->getClass(), new Alias($serviceID, true));
     }
 
-    private function addConsumer($name, array $consumer, ContainerBuilder $container)
+    private function addConsumer(string $name, array $consumer, ContainerBuilder $container): Definition
     {
         $definition = new Definition(Consumer::class);
         $definition
@@ -106,7 +106,7 @@ class OverblogActiveMqExtension extends Extension
         return $definition;
     }
 
-    private function buildConnectionServiceId($name)
+    private function buildConnectionServiceId(string $name): string
     {
         return sprintf('%s.connection.%s', $this->getAlias(), $name);
     }
