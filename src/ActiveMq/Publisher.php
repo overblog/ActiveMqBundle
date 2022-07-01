@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Overblog\ActiveMqBundle\ActiveMq;
 
 use Overblog\ActiveMqBundle\Exception\ActiveMqException;
@@ -12,33 +15,34 @@ class Publisher extends Base
 {
     /**
      * Publish Message in ActiveMQ
-     * @param mixed $msg
+     *
+     * @param mixed  $msg
      * @param string $routing_key
-     * @param boolean $concat_key
-     * @return boolean
+     * @param bool   $concat_key
+     *
+     * @return bool
+     *
      * @throws ActiveMqException
      */
     public function publish($msg, $routing_key = null, $concat_key = false)
     {
         // Create object if text is send
-        if(!is_object($msg))
-        {
+        if (!is_object($msg)) {
             $msg = new Message($msg);
         }
 
         // Add routing key if needed
-        if(!empty($routing_key))
-        {
+        if (!empty($routing_key)) {
             $msg->headers->set('routing_key', $routing_key);
         }
 
         $stomp = $this->connection->getConnection();
 
-        if(!$stomp->send($this->getDestination($routing_key, $concat_key),
-                $msg->getBody(),
-                $msg->getMessageHeaders()
-            ))
-        {
+        if (!$stomp->send(
+            $this->getDestination($routing_key, $concat_key),
+            $msg->getBody(),
+            $msg->getMessageHeaders()
+        )) {
             throw new ActiveMqException('Unable to send message');
         }
 

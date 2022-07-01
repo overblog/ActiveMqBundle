@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Overblog\ActiveMqBundle\ActiveMq;
 
 /**
@@ -13,4 +16,3 @@ interface ConsumerInterface
      */
     public function execute(Message $msg);
 }
-

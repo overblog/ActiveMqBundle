@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Overblog\ActiveMqBundle\ActiveMq;
 
 use Overblog\ActiveMqBundle\Exception\ActiveMqException;
@@ -13,20 +16,20 @@ abstract class Base
 {
     /**
      * Options
-     * @var array $options
+     *
+     * @var array
      */
     protected $options;
 
     /**
      * Connection handler
-     * @var Connection $connection
+     *
+     * @var Connection
      */
     protected $connection;
 
     /**
      * Instanciate
-     * @param Connection $connection
-     * @param array $options
      */
     public function __construct(Connection $connection, array $options)
     {
@@ -36,41 +39,42 @@ abstract class Base
 
     /**
      * Return destination string
+     *
      * @param string $routing_key
-     * @param boolean $concat_key
+     * @param bool   $concat_key
+     *
      * @return string
+     *
      * @throws ActiveMqException
      */
     public function getDestination($routing_key = null, $concat_key = false)
     {
-        if(in_array($this->options->get('type'), array('queue', 'topic')))
-        {
-            $destination = sprintf('/%s/%s',
-                    $this->options->get('type'),
-                    $this->options->get('name')
-                );
+        if (in_array($this->options->get('type'), ['queue', 'topic'])) {
+            $destination = sprintf(
+                '/%s/%s',
+                $this->options->get('type'),
+                $this->options->get('name')
+            );
 
-            if(true === $concat_key && !empty($routing_key))
-            {
-                $destination = preg_replace('#\\' . $this->options->get('separator') . '>|\*$#', '', $destination);
+            if (true === $concat_key && !empty($routing_key)) {
+                $destination = preg_replace('#\\'.$this->options->get('separator').'>|\*$#', '', $destination);
 
-                $destination .= $this->options->get('separator') . $routing_key;
+                $destination .= $this->options->get('separator').$routing_key;
             }
 
             return $destination;
-        }
-        else
-        {
+        } else {
             throw new ActiveMqException('Wrong destination type');
         }
     }
 
     /**
      * Purge given destination
+     *
      * @param string $routing_key
-     * @param boolean $concat_key
+     * @param bool   $concat_key
      */
-    public function purge($routing_key = null, $concat_key = false)
+    public function purge($routing_key = null, $concat_key = false): void
     {
         $this->connection->purge($this->getDestination($routing_key, $concat_key));
     }

@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\ActiveMqBundle\DependencyInjection;
 
-use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -13,7 +14,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  */
 class Configuration implements ConfigurationInterface
 {
-    const NAME = 'overblog_active_mq';
+    public const NAME = 'overblog_active_mq';
 
     /**
      * {@inheritDoc}
@@ -85,10 +86,11 @@ class Configuration implements ConfigurationInterface
             ->end()
             //Connection validation
             ->validate()
-                ->ifTrue( function($v) {
-                    foreach($v['publishers'] as $key => $producer)
-                    {
-                        if(!isset($v['connections'][$producer['connection']])) return true;
+                ->ifTrue(function ($v) {
+                    foreach ($v['publishers'] as $key => $producer) {
+                        if (!isset($v['connections'][$producer['connection']])) {
+                            return true;
+                        }
                     }
 
                     return false;
@@ -97,10 +99,11 @@ class Configuration implements ConfigurationInterface
             ->end()
             //Connection validation
             ->validate()
-                ->ifTrue( function($v) {
-                    foreach($v['consumers'] as $key => $producer)
-                    {
-                        if(!isset($v['connections'][$producer['connection']])) return true;
+                ->ifTrue(function ($v) {
+                    foreach ($v['consumers'] as $key => $producer) {
+                        if (!isset($v['connections'][$producer['connection']])) {
+                            return true;
+                        }
                     }
 
                     return false;

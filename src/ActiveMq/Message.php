@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Overblog\ActiveMqBundle\ActiveMq;
 
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -13,15 +16,16 @@ class Message
     /**
      * Message Type Text (default)
      */
-    const TYPE_TEXT = 'text';
+    public const TYPE_TEXT = 'text';
 
     /**
      * Message Type Bytes
      */
-    const TYPE_BYTES = 'bytes';
+    public const TYPE_BYTES = 'bytes';
 
     /**
      * Message body
+     *
      * @var string
      */
     public $body;
@@ -29,19 +33,22 @@ class Message
     /**
      * Expiration time of the message
      * time in milliseconds to expire the message - 0 means never expire
+     *
      * @var int
      */
     protected $expires = 0;
 
     /**
      * Whether or not the message is persistent
-     * @var boolean
+     *
+     * @var bool
      */
     protected $persistent = true;
 
     /**
      * Priority on the message (0 < 9)
      * value from 0-9
+     *
      * @var int
      */
     protected $priority = 4;
@@ -49,12 +56,14 @@ class Message
     /**
      * Specifies the Message Groups
      * identity of the message group
+     *
      * @var string
      */
     protected $groupId;
 
     /**
      * Specifies the sequence number in the Message Groups
+     *
      * @var int
      */
     protected $groupSeq = 0;
@@ -62,6 +71,7 @@ class Message
     /**
      * The time in milliseconds that a message will wait
      * before being scheduled to be delivered by the broker
+     *
      * @var int
      */
     protected $scheduledDelay = 0;
@@ -69,34 +79,39 @@ class Message
     /**
      * The time in milliseconds to wait after the start time
      * to wait before scheduling the message again
+     *
      * @var int
      */
     protected $scheduledPeriod = 0;
 
     /**
      * The number of times to repeat scheduling a message for delivery
+     *
      * @var int
      */
     protected $scheduledRepeat = 0;
 
     /**
      * Use a Cron entry to set the schedule
+     *
      * @var string
      */
     protected $scheduledCron;
 
     /**
      * Additional headers
+     *
      * @var ParameterBag
      */
     public $headers;
 
     /**
      * Create a new message for sending to Active MQ
+     *
      * @param string $body
-     * @param array $headers
+     * @param array  $headers
      */
-    public function __construct($body, $headers = array())
+    public function __construct($body, $headers = [])
     {
         $this->body = $body;
         $this->setHeaders($headers);
@@ -104,22 +119,18 @@ class Message
 
     /**
      * Set object with correct headers
-     * @param array $headers
      */
-    protected function setHeaders(array $headers)
+    protected function setHeaders(array $headers): void
     {
-        foreach($headers as $key => $value)
-        {
-            if(isset($this->$key))
-            {
+        foreach ($headers as $key => $value) {
+            if (isset($this->$key)) {
                 $this->$key = $value;
                 unset($headers[$key]);
             }
 
             // Clés JMSX
-            elseif(isset($this->{'JMSX' . $key}))
-            {
-                $this->{'JMSX' . $key} = $value;
+            elseif (isset($this->{'JMSX'.$key})) {
+                $this->{'JMSX'.$key} = $value;
                 unset($headers[$key]);
             }
         }
@@ -129,7 +140,9 @@ class Message
 
     /**
      * Return header value
+     *
      * @param string $key
+     *
      * @return string
      */
     public function get($key)
@@ -139,24 +152,27 @@ class Message
 
     /**
      * Return body
+     *
      * @return string
      */
     public function getBody()
     {
-        return (string)$this->body;
+        return (string) $this->body;
     }
 
     /**
      * Set body
+     *
      * @param string $body
      */
-    public function setBody($body)
+    public function setBody($body): void
     {
         $this->body = $body;
     }
 
     /**
      * Return expiration time
+     *
      * @return int
      */
     public function getExpires()
@@ -166,16 +182,18 @@ class Message
 
     /**
      * Set expiration time
+     *
      * @param int $expires
      */
-    public function setExpires($expires)
+    public function setExpires($expires): void
     {
         $this->expires = intval($expires);
     }
 
     /**
      * Return whether or not the message is persistent
-     * @return boolean
+     *
+     * @return bool
      */
     public function getPersistent()
     {
@@ -184,15 +202,17 @@ class Message
 
     /**
      * Set whether or not the message is persistent
-     * @param boolean $persistent
+     *
+     * @param bool $persistent
      */
-    public function setPersistent($persistent)
+    public function setPersistent($persistent): void
     {
-        $this->persistent = (bool)$persistent;
+        $this->persistent = (bool) $persistent;
     }
 
     /**
      * Return priority on the message
+     *
      * @return int
      */
     public function getPriority()
@@ -202,15 +222,17 @@ class Message
 
     /**
      * Set priority on the message
+     *
      * @param int $priority
      */
-    public function setPriority($priority)
+    public function setPriority($priority): void
     {
         $this->priority = intval($priority);
     }
 
     /**
      * Get the Message Groups
+     *
      * @return string
      */
     public function getGroupId()
@@ -220,9 +242,10 @@ class Message
 
     /**
      * Specifies the Message Groups
+     *
      * @param string $groupId
      */
-    public function setGroupId($groupId)
+    public function setGroupId($groupId): void
     {
         $this->groupId = $groupId;
     }
@@ -231,7 +254,7 @@ class Message
      * Reset the group affectation by specify the sequence number to -1
      * Next message will be reaffected
      */
-    public function closeGroup()
+    public function closeGroup(): void
     {
         $this->groupSeq = -1;
     }
@@ -239,6 +262,7 @@ class Message
     /**
      * Get the time in milliseconds that a message will wait
      * before being scheduled to be delivered by the broker
+     *
      * @return int
      */
     public function getScheduledDelay()
@@ -249,9 +273,10 @@ class Message
     /**
      * Set the time in milliseconds that a message will wait
      * before being scheduled to be delivered by the broker
+     *
      * @param int $scheduledDelay
      */
-    public function setScheduledDelay($scheduledDelay)
+    public function setScheduledDelay($scheduledDelay): void
     {
         $this->scheduledDelay = intval($scheduledDelay);
     }
@@ -259,6 +284,7 @@ class Message
     /**
      * Get the time in milliseconds to wait after the start time
      * to wait before scheduling the message again
+     *
      * @return int
      */
     public function getScheduledPeriod()
@@ -269,15 +295,17 @@ class Message
     /**
      * Set the time in milliseconds to wait after the start time
      * to wait before scheduling the message again
+     *
      * @param int $scheduledPeriod
      */
-    public function setScheduledPeriod($scheduledPeriod)
+    public function setScheduledPeriod($scheduledPeriod): void
     {
         $this->scheduledPeriod = intval($scheduledPeriod);
     }
 
     /**
      * Get the number of times to repeat scheduling a message for delivery
+     *
      * @return int
      */
     public function getScheduledRepeat()
@@ -287,15 +315,17 @@ class Message
 
     /**
      * Set the number of times to repeat scheduling a message for delivery
+     *
      * @param int $scheduledRepeat
      */
-    public function setScheduledRepeat($scheduledRepeat)
+    public function setScheduledRepeat($scheduledRepeat): void
     {
         $this->scheduledRepeat = intval($scheduledRepeat);
     }
 
     /**
      * Get Cron entry used to set the schedule
+     *
      * @return string
      */
     public function getScheduledCron()
@@ -305,25 +335,24 @@ class Message
 
     /**
      * Use a Cron entry to set the schedule
+     *
      * @param string $scheduledCron
      */
-    public function setScheduledCron($scheduledCron)
+    public function setScheduledCron($scheduledCron): void
     {
         $this->scheduledCron = $scheduledCron;
     }
 
     /**
      * Return message Type
+     *
      * @return string
      */
     public function getMessageType()
     {
-        if($this->headers->has('amq-msg-type'))
-        {
+        if ($this->headers->has('amq-msg-type')) {
             return $this->headers->get('amq-msg-type');
-        }
-        else
-        {
+        } else {
             return self::TYPE_TEXT;
         }
     }
@@ -331,7 +360,7 @@ class Message
     /**
      * Set message type to text
      */
-    public function setAsTextMessage()
+    public function setAsTextMessage(): void
     {
         $this->headers->set('amq-msg-type', self::TYPE_TEXT);
     }
@@ -339,72 +368,62 @@ class Message
     /**
      * Set message type to bytes
      */
-    public function setAsBytesMessage()
+    public function setAsBytesMessage(): void
     {
         $this->headers->set('amq-msg-type', self::TYPE_BYTES);
     }
 
     /**
      * Return message options in header format
+     *
      * @return array
      */
     public function getMessageHeaders()
     {
-        $header = array();
+        $header = [];
 
         // Send only header if default value is changed
-        if($this->expires != 0)
-        {
+        if (0 != $this->expires) {
             $header['expires'] =
-                (double)round(microtime(true) * 1000) + $this->expires;
+                (float) round(microtime(true) * 1000) + $this->expires;
         }
 
         // Stomp message is not persistent by default
-        if($this->persistent)
-        {
+        if ($this->persistent) {
             $header['persistent'] = 'true';
         }
 
-        if($this->priority != 4)
-        {
+        if (4 != $this->priority) {
             $header['priority'] = $this->priority;
         }
 
-        if(!is_null($this->groupId) && !empty($this->groupId))
-        {
+        if (!is_null($this->groupId) && !empty($this->groupId)) {
             $header['JMSXGroupID'] = $this->groupId;
         }
 
-        if($this->groupSeq != 0)
-        {
+        if (0 != $this->groupSeq) {
             $header['JMSXGroupSeq'] = $this->groupSeq;
         }
 
-        if($this->scheduledDelay != 0)
-        {
+        if (0 != $this->scheduledDelay) {
             $header['AMQ_SCHEDULED_DELAY'] = $this->scheduledDelay;
         }
 
-        if($this->scheduledPeriod != 0)
-        {
+        if (0 != $this->scheduledPeriod) {
             $header['AMQ_SCHEDULED_PERIOD'] = $this->scheduledPeriod;
         }
 
-        if($this->scheduledRepeat != 0)
-        {
+        if (0 != $this->scheduledRepeat) {
             $header['AMQ_SCHEDULED_REPEAT'] = $this->scheduledRepeat;
         }
 
-        if(!is_null($this->scheduledCron) && !empty($this->scheduledCron))
-        {
+        if (!is_null($this->scheduledCron) && !empty($this->scheduledCron)) {
             $header['AMQ_SCHEDULED_CRON'] = $this->scheduledCron;
         }
 
         // Add additional headers
-        foreach($this->headers->all() as $key => $var)
-        {
-            if(!isset($this->$key))
-            {
+        foreach ($this->headers->all() as $key => $var) {
+            if (!isset($this->$key)) {
                 $header[$key] = $var;
             }
         }

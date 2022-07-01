@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\ActiveMqBundle\DependencyInjection;
 
 use Overblog\ActiveMqBundle\ActiveMq\Connection;
@@ -7,13 +9,13 @@ use Overblog\ActiveMqBundle\ActiveMq\Consumer;
 use Overblog\ActiveMqBundle\ActiveMq\Publisher;
 use Overblog\ActiveMqBundle\Command\ConsumerCommand;
 use Overblog\ActiveMqBundle\Command\ProducerCommand;
+use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\Config\FileLocator;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 /**
  * This is the class that loads and manages your bundle configuration
@@ -25,7 +27,7 @@ class OverblogActiveMqExtension extends Extension
     /**
      * {@inheritDoc}
      */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
@@ -34,22 +36,22 @@ class OverblogActiveMqExtension extends Extension
         $loader->load('services.yml');
 
         // Register connections
-        foreach($config['connections'] as $name => $connection) {
+        foreach ($config['connections'] as $name => $connection) {
             $this->addConnection($name, $connection, $container);
         }
 
         // Register publishers
-        foreach($config['publishers'] as $name => $producer) {
+        foreach ($config['publishers'] as $name => $producer) {
             $this->addPublisher($name, $producer, $container);
         }
 
         // Register consumers
-        foreach($config['consumers'] as $name => $consumer) {
+        foreach ($config['consumers'] as $name => $consumer) {
             $this->addConsumer($name, $consumer, $container);
         }
     }
 
-    private function addConnection($name, array $connection, ContainerBuilder $container)
+    private function addConnection($name, array $connection, ContainerBuilder $container): void
     {
         $definition = new Definition(Connection::class);
         $definition
@@ -69,7 +71,7 @@ class OverblogActiveMqExtension extends Extension
         );
     }
 
-    private function addPublisher($name, array $publisher, ContainerBuilder $container)
+    private function addPublisher($name, array $publisher, ContainerBuilder $container): void
     {
         $definition = new Definition(Publisher::class);
         $definition
