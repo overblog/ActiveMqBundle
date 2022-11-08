@@ -75,7 +75,7 @@ class ProducerCommand extends Command
         if (empty($message)) {
             $output->writeln('<error>Message cannot be empty</error>');
 
-            return self::FAILURE;
+            return 1;
         }
 
         $name = $input->getArgument('name');
@@ -114,9 +114,9 @@ class ProducerCommand extends Command
                 )
             );
 
-            return self::FAILURE;
+            return 1;
         }
 
-        return self::SUCCESS;
+        return 0;
     }
 }
