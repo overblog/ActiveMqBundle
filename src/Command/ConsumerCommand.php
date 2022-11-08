@@ -50,6 +50,6 @@ class ConsumerCommand extends Command
         $consumer->setRoutingKey($input->getOption('route'));
         $consumer->consume($input->getOption('messages'));
 
-        return self::SUCCESS;
+        return 0;
     }
 }
